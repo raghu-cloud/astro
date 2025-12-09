@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horoscope Report</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-top: 20mm;
+            color: #333;
+        }
+        
+        /* Header styling */
+        .page-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 15mm;
+            text-align: right;
+            border-bottom: 1px solid #8b5cf6;
+            background-color: white;
+            z-index: 1000;
+            padding: 10px 20px;
+        }
+        
+        /* Zodiac symbol styling */
+        .zodiac-symbol {
+            font-size: 2.5rem;
+            color: #6c4ab6;
+            margin-bottom: 10px;
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border-radius: 50%;
+            background-color: #f8f5ff;
+        }
+        
+        /* Element badge styling */
+        .element-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .air {
+            background-color: #e0f7fa;
+            color: #0288d1;
+            border: 1px solid #0288d1;
+        }
+        
+        .fire {
+            background-color: #ffebee;
+            color: #e53935;
+            border: 1px solid #e53935;
+        }
+        
+        .earth {
+            background-color: #e8f5e9;
+            color: #43a047;
+            border: 1px solid #43a047;
+        }
+        
+        .water {
+            background-color: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #1976d2;
+        }
+        
+        /* Card styling */
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #6c4ab6, #8b5cf6);
+            color: white;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-bottom: none;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        /* Zodiac image styling */
+        .zodiac-image {
+            max-width: 120px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .personality-traits {
+            background-color: #f8f5ff;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #6c4ab6;
+        }
+        
+        .personality-traits ul {
+            margin-bottom: 0;
+            padding-left: 20px;
+        }
+        
+        .personality-traits li {
+            margin-bottom: 8px;
+        }
+        
+        .personality-traits li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .report-title {
+            color: #6c4ab6;
+            font-weight: 700;
+            margin-top: 0;
+        }
+        
+        /* Data display section - horizontal key-value */
+        .data-item {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: baseline;
+        }
+        
+        .data-label {
+            font-weight: 600;
+            color: #6c4ab6;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 140px; /* Increased width for more space */
+            margin-right: 30px; /* Increased margin for more space between key and value */
+            flex-shrink: 0;
+        }
+        
+        .data-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        /* Pagination control */
+        .page-break-avoid {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .page-break-inside-avoid {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        /* Font size adjustment for long analysis lists */
+        .analysis-long .list-group-item p {
+            font-size: 0.9rem;
+        }
+
+        /* Global styles */
+        .predictions-container {
+            font-family: Arial, sans-serif;
+            font-size: 14px !important;
+            max-width: 100% !important;
+            margin: 0 auto !important;
+        }
+        
+        .main-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 1rem !important;
+            overflow: hidden;
+        }
+        
+        .main-header {
+            background-color: #f8f9fa;
+            padding: 12px 15px !important;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .main-header h3 {
+            margin: 0 !important;
+            font-size: 1.25rem !important;
+        }
+        
+        .main-body {
+            padding: 0 !important;
+        }
+        
+        .predictions-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -8px !important;
+        }
+        
+        .prediction-column {
+            width: 50%;
+            padding: 8px !important;
+            box-sizing: border-box;
+        }
+        
+        .prediction-card {
+            border: 1px solid #eee;
+            border-radius: 6px;
+            height: 100% !important;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .prediction-header {
+            padding: 8px 12px !important;
+            border-bottom: 1px solid #eee;
+            border-radius: 6px 6px 0 0;
+        }
+        
+        .prediction-header h5 {
+            margin: 0 !important;
+            font-size: 1rem !important;
+            font-weight: 600;
+        }
+        
+        .prediction-body {
+            padding: 10px 12px !important;
+            font-size: 0.85rem !important;
+            line-height: 1.4 !important;
+            flex-grow: 1;
+        }
+        
+        .prediction-body p {
+            margin: 0 !important;
+        }
+        
+        /* Header colors */
+        .personal-header { background-color: #f0f5ff; color: #2962ff; }
+        .health-header { background-color: #f0fff7; color: #00c853; }
+        .career-header { background-color: #fffbf0; color: #ffa000; }
+        .emotion-header { background-color: #f0faff; color: #00b0ff; }
+        .travel-header { background-color: #f5f5f5; color: #616161; }
+
+
+        /* Print-specific styles */
+        @media print {
+            body {
+                margin-top: 20mm !important;
+            }
+            
+            .page-header {
+                display: block !important;
+                position: fixed;
+                top: 0;
+                height: 15mm;
+            }
+            
+            .container {
+                max-width: none !important;
+                width: 100% !important;
+                padding: 0 15px !important;
+            }
+            
+            .card {
+                break-inside: avoid !important;
+            }
+            
+            .report-title-section {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            
+            @page {
+                margin: 10mm 5mm 5mm 5mm !important; /* Top, right, bottom, left margins */
+                size: A4 !important;
+            }
+
+            .list-group-item {
+                break-inside: auto;
+                page-break-inside: auto;
+            }
+            
+            /* Add a page break after approximately 3 analysis points */
+            .list-group-item:nth-child(3n) {
+                break-after: auto;
+                page-break-after: auto;
+            }
+
+            .personality-traits {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            /* Additional print adjustment for long lists */
+            .analysis-long .list-group-item {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .prediction-column {
+                width: 100%;
+            }
+            
+            .prediction-body {
+                font-size: 0.9rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Fixed Header for all pages with logo on left and title on right -->
+    <div class="page-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo-container">
+                <img src="data:image/png;base64,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" alt="Horoscope Logo" style="height: 30px; width: auto;">
+            </div>
+            <h3 class="text-primary">Personal Horoscope Report</h3>
+        </div>
+    </div>
+
+    <div class="container my-4">
+        <!-- Header Section - Now within the same container -->
+        <div class="report-title-section mb-4">
+            <h1 class="display-4 report-title"><center>Daily Horoscope Analysis</center></h1>
+            <center><p class="text-muted mb-0">Generated on: 2025-03-26 11:17:56.556724</p></center>
+        </div>
+        <div style="height: 40px;"></div>
+        <!-- Personal Profile Section -->
+        <div class="card shadow">
+            <div class="card-header">
+                <h3 class="mb-0">Personal Zodiac Profile</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <!-- Vertical stack of horizontal key-value pairs -->
+                        <div class="data-item">
+                            <span class="data-label">Name</span>
+                            <span class="data-value">Raghu</span>
+                        </div>
+                        
+                        <div class="data-item">
+                            <span class="data-label">Zodiac Sign</span>
+                            <span class="data-value" style="color: #6c4ab6;">Libra</span>
+                        </div>
+                        
+                        <div class="data-item">
+                            <span class="data-label">Element</span>
+                            <span class="element-badge Air">Air</span>
+                        </div>
+                        
+                        <div class="data-item">
+                            <span class="data-label">Modality</span>
+                            <span class="badge bg-secondary">Cardinal</span>
+                        </div>
+                        
+                        <div class="data-item">
+                            <span class="data-label">Zodiac Symbol</span>
+                            <span class="zodiac-symbol">♎</span>
+                        </div>
+                        
+                        <div class="data-item">
+                            <span class="data-label">Zodiac Image</span>
+                            <div>
+                                <img src="https://cdn.roxyapi.com/img/astrology/libra.png" alt="Libra Image" class="zodiac-image">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height: 40px;"></div>
+                    <div class="col-md-8">
+                        <div class="data-item d-block">
+                            <span class="data-label mb-2">Personality Traits</span>
+                            <div class="personality-traits">
+                                <ul>
+                                    <!-- Split personality text into bullet points by periods -->
+                                    
+                                    
+                                        
+                                            <li>Diplomatic, charming, and harmonious.</li>
+                                        
+                                    
+                                        
+                                            <li>Libra values balance and fairness and is known for their ability to mediate and bring people together.</li>
+                                        
+                                    
+                                        
+                                            <li>They have a natural appreciation for beauty and often possess a refined sense of style.</li>
+                                        
+                                    
+                                        
+                                            <li>While they can struggle with indecision, their ability to see all sides of a situation makes them thoughtful and fair-minded.</li>
+                                        
+                                    
+                                        
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div style="height: 130px;"></div> <!-- Reduced space after page break -->
+        <!-- Analysis Section -->
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h3 class="mb-0">Your Personalized Zodiac Analysis</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="list-group analysis-long">
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">You possess a diplomatic and charming personality, with a strong inclination towards harmony and balance in all aspects of life.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">Your ability to mediate and bring people together enhances your relationships, making you a cherished partner and friend.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">With your Libra nature, you may find yourself drawn to careers in law, diplomacy, or the arts, where your sense of fairness and beauty can shine.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">Be aware of potential indecision stemming from your desire to weigh all options, which can sometimes hinder your progress in both personal and professional realms.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">Your appreciation for beauty and aesthetics can lead to a fulfilling life, but ensure you also focus on practical matters to maintain financial stability.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">The Air element in your chart suggests a need for mental stimulation and social interaction, which are crucial for your emotional well-being.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">Current planetary transits may encourage you to embrace change and assert your needs more clearly, especially in relationships and career pursuits.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">Look for favorable periods during the upcoming Venus transits, as they will enhance your charm and attract positive relationships and opportunities.</p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">Consider engaging in mindfulness practices to help manage indecision and enhance your clarity, allowing you to navigate life's challenges with grace.</p>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 150px;"></div>
+        <!-- Predictions Section -->
+        <div class="predictions-container">
+            <div class="card shadow mt-4">
+                <div class="card-header">
+                    <h3>Your Daily Predictions</h3>
+                </div>
+                <div class="main-body">
+                    <div class="predictions-row">
+                        <!-- Personal Prediction -->
+                        <div class="prediction-column">
+                            <div class="prediction-card">
+                                <div class="prediction-header personal-header">
+                                    <h5>Personal Relationships</h5>
+                                </div>
+                                <div class="prediction-body">
+                                    <p>In the realm of personal relationships, you're encouraged to communicate openly and honestly. With Venus in retrograde, past misunderstandings might surface, offering a chance for resolution and growth. Listening to your loved ones' perspectives can strengthen bonds and increase emotional clarity. Focus on nurturing these connections through empathy and understanding. Shared activities could also bring joy and reinforce the harmony in your relationships. Embrace moments of togetherness today.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Health Prediction -->
+                        <div class="prediction-column">
+                            <div class="prediction-card">
+                                <div class="prediction-header health-header">
+                                    <h5>Health & Wellbeing</h5>
+                                </div>
+                                <div class="prediction-body">
+                                    <p>Health-wise, this day urges you to be mindful of your well-being, both physically and mentally. Ensure you're maintaining a balanced diet and incorporating some form of exercise into your routine. With the Moon influencing health, emotional stress may manifest physically, so take time for relaxation and introspection. Meditation or a calming hobby can enhance your mental peace. Prioritize self-care, and don't hesitate to seek help if needed.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Profession Prediction -->
+                        <div class="prediction-column">
+                            <div class="prediction-card">
+                                <div class="prediction-header career-header">
+                                    <h5>Career & Professional Life</h5>
+                                </div>
+                                <div class="prediction-body">
+                                    <p>Today, creativity takes a front seat in your professional life, Libra. You're likely to find innovative solutions to challenges that have been lingering. However, avoid making sudden decisions, especially with Mercury in retrograde. Instead, focus on refining existing projects and plan strategically for the future. Collaboration with colleagues may prove beneficial, as diverse ideas will enhance your productivity. Remember, patience is a virtue that will lead to rewarding results.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Emotions Prediction -->
+                        <div class="prediction-column">
+                            <div class="prediction-card">
+                                <div class="prediction-header emotion-header">
+                                    <h5>Emotional Wellbeing</h5>
+                                </div>
+                                <div class="prediction-body">
+                                    <p>Emotions may be heightened during this phase, prompting introspection and self-discovery. It's a time to embrace your vulnerabilities and explore underlying feelings. Engaging in creative pursuits or journaling can offer valuable insight into your emotional landscape. Don't shy away from expressing your needs and desires; doing so may lead to a deeper understanding of yourself and those around you. Remember, every emotion serves a purpose and guides you forward.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Travel Prediction -->
+                        <div class="prediction-column">
+                            <div class="prediction-card">
+                                <div class="prediction-header travel-header">
+                                    <h5>Travel & Movement</h5>
+                                </div>
+                                <div class="prediction-body">
+                                    <p>Your travel plans today might encounter unexpected changes or delays. Staying adaptable and open to spontaneous adventures can turn potential setbacks into exciting opportunities. Whether you're traveling for work or leisure, pay attention to detail with itineraries and ensure you have a backup plan. Use this time to explore niches or interests that you usually overlook, finding joy in unexpected places is part of travel's magic.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Luck Section -->
+        <div class="page-break"></div>
+        <div style="height: 250px;"></div>
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h3 class="mb-0">Your Luck Indicators</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="list-group">
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">
+                                        
+                                        
+                                            <strong>Colors of the day</strong> : Blue, Silver
+                                        
+                                    </p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">
+                                        
+                                        
+                                            <strong>Lucky Numbers of the day</strong> : 8, 17, 24
+                                        
+                                    </p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">
+                                        
+                                        
+                                            <strong>Lucky Alphabets you will be in sync with</strong> : L, B
+                                        
+                                    </p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">
+                                        
+                                        
+                                            <strong>Cosmic Tip</strong> : Trust your intuition and act with heartfelt sincerity.
+                                        
+                                    </p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">
+                                        
+                                        
+                                            <strong>Tips for Singles</strong> : Embrace solitude; it strengthens your core and attracts love.
+                                        
+                                    </p>
+                                </div>
+                            
+                                <div class="list-group-item border-0 mb-3 personality-traits">
+                                    <p class="mb-0">
+                                        
+                                        
+                                            <strong>Tips for Couples</strong> : Share dreams openly; mutual goals bring hearts closer together.
+                                        
+                                    </p>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

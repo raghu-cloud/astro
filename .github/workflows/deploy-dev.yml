@@ -1,0 +1,49 @@
+name: Deploy to astro_ai_dev EC2
+ 
+on:
+  push:
+    branches: [ dev_ec2 ]
+ 
+jobs:
+   deploy:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout code
+         uses: actions/checkout@v3
+ 
+       - name: Configure AWS credentials
+         uses: aws-actions/configure-aws-credentials@v1
+         with:
+           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+           aws-region: ap-south-1
+ 
+       - name: Deploy to EC2
+         uses: appleboy/ssh-action@master
+         with:
+           host: 13.234.137.84
+           username: ubuntu
+           key: ${{ secrets.EC2_SSH_KEY }}
+           script: |
+             cd /home/ubuntu/backend
+             git fetch origin dev_ec2
+             git reset --hard origin/dev_ec2
+             
+             # Stop and disable the systemd service
+             sudo systemctl stop automatic.service || true
+             sudo systemctl disable automatic.service || true
+             
+             # Start Docker deployment
+             source venv/bin/activate
+             pip install -r requirements.txt
+             python manage.py migrate --skip-checks
+             docker-compose down
+             echo "Running tests..."
+             python manage.py test
+             echo "Tests passed!"
+             docker-compose up -d --build
+             
+             # Verify deployment
+             docker-compose ps
+             docker-compose logs
+

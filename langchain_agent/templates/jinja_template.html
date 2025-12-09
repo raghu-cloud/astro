@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrology Report</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* General Styles */
+        body {
+            margin-top: 20mm; /* Top margin for header */
+            position: relative;
+        }
+        
+        /* Header styling */
+        .page-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 15mm;
+            text-align: right;
+            padding-right: 10mm;
+            border-bottom: 1px solid #ddd;
+            background-color: white;
+            z-index: 1000;
+        }
+        
+        /* Space between cards */
+        .card-spacer {
+            height: 20px;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .table th, .table td {
+            font-size: 0.85rem;
+            padding: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .planet-image {
+            width: 30px;
+            height: 30px;
+        }
+        
+        /* Page break utility */
+        .page-break {
+            page-break-after: always;
+        }
+
+                
+        /* Print-specific styles */
+        @media print {
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            
+            body {
+                margin-top: 20mm !important; /* Maintain top margin in print */
+            }
+            
+            .page-header {
+                display: block !important;
+                position: fixed;
+                top: 0;
+                height: 15mm;
+                width: 100%;
+            }
+            
+            .container {
+                max-width: none !important;
+                width: 100% !important;
+                padding: 0 5px !important;
+                margin: 0 !important;
+                margin-top: 20mm !important; /* Additional margin for container */
+            }
+            
+            /* Force vertical layout */
+            .row {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            /* Make columns full width */
+            .col-6 {
+                width: 100% !important;
+                flex: 0 0 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin-bottom: 15px !important;
+            }
+            
+            .card {
+                width: 100% !important;
+                margin-bottom: 15px !important;
+                border: 1px solid #ddd !important;
+            }
+            
+            .card-header {
+                padding: 10px 10px !important;
+            }
+            
+            .card-body {
+                padding: 10px !important;
+            }
+            
+            /* Card spacer in print */
+            .card-spacer {
+                height: 20px !important;
+                display: block !important;
+            }
+            
+            /* Adjust inner rows (the ones inside card-body) */
+            .card-body .row {
+                display: flex !important;
+                flex-wrap: wrap !important;
+            }
+            
+            /* Fix the nested column layout */
+            .card-body .col-6 {
+                width: 50% !important;
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+                margin-bottom: 5px !important;
+            }
+
+            .d-print-block {
+                display: flex !important;
+            }
+            
+            /* Table print optimizations */
+            .table-responsive {
+                overflow-x: visible !important;
+            }
+            
+            .table th, .table td {
+                font-size: 7pt !important;
+                padding: 2px !important;
+            }
+
+            .large-font-table th,
+            .large-font-table td {
+                font-size: 15pt !important; /* Adjust size as needed */
+                padding: 2px !important;
+            }
+
+            .table-subplanet th,
+            .table-subplanet td {
+                padding: 5px !important;
+            }
+
+            .table-vimshottari-dasha th,
+            .table-vimshottari-dasha td {
+                font-size: 8pt !important;
+                padding: 3px !important;
+                width: 400px !important;
+            }
+
+            .table-vimshottari-dasha thead th:first-child {
+                width: 40% !important;
+            }
+
+            .table-vimshottari-dasha thead th:last-child {
+                width: 60% !important;
+            }
+            
+            /* Reduce table column widths */
+            .compact-table th, .compact-table td {
+                max-width: 120px !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+            
+            /* Table spacer in print */
+            .table-spacer {
+                height: 30px !important;
+                display: block !important;
+            }
+            
+            @page {
+                margin: 10mm 5mm 5mm 5mm !important; /* Top, right, bottom, left margins */
+                size: A4 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Fixed Header for all pages with logo on left and title on right -->
+    <div class="page-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="logo-container">
+                <img src="data:image/png;base64,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" alt="Horoscope Logo" style="height: 30px; width: auto;">
+            </div>
+            <h3 class="text-primary">Astrology(Kundli) Report</h3>
+        </div>
+    </div>
+    
+    <!-- Header Section -->
+    <header class="report-container text-center mb-4" style="margin-top: 20mm;">
+        <h1 class="display-4 fw-bold text-primary">Astrology Report</h1>
+    </header>
+    
+    <div class="container my-4 print-optimized">
+        <div class="row d-print-block"> <!-- Force single column for print -->
+            <!-- Personal Details Card -->
+            <div class="col-6 print-section">
+                <div class="card h-100 shadow-sm compact-card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h4 mb-0">Personal Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <strong>Full Name:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.full_name }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Date of Birth:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.date }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Time of Birth:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.hour }}:{{ report['basic-astro-details'].data.minute }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Gender:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.gender }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Place of Birth:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.place }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Latitude:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.latitude }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Longitude:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.longitude }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Timezone:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.timezone }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add extra space after the personal details card -->
+            <div class="card-spacer"></div>
+            
+            <!-- Astrological Details Card -->
+            <div class="col-6 mb-3 print-section">
+                <div class="card h-100 shadow-sm compact-card">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="h4 mb-0">Astrological Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <strong>Sunrise:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.sunrise }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Sunset:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.sunset }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Tithi:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.tithi }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Paksha:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.paksha }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Paya:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.paya.type }} ({{ report['basic-astro-details'].data.paya.result }})
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Sun Sign:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.sunsign }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Moon Sign:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.moonsign }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Rashi Akshar:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.rashi_akshar }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Chandramasa:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.chandramasa }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Tatva:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.tatva }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Prahar:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.prahar }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Nakshatra:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.nakshatra }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Vaar:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.vaar }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Varna:</strong>
+                            </div>
+                            <div class="col-3 mb-2">
+                                {{ report['basic-astro-details'].data.varna }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Vashya:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.vashya }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Yoni:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.yoni }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Gana:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.gana }}
+                            </div>
+                            
+                            <div class="col-6 mb-2">
+                                <strong>Nadi:</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                {{ report['basic-astro-details'].data.nadi }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Planetary Positions Section - Force Page Break -->
+            {% if report['planetary-positions'].data.planets %}
+            <div class="page-break"></div>
+            <div style="height: 50px;"></div> <!-- Adjust height as needed -->
+            <div class="row mt-10">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Planetary Positions</h2>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped table-bordered table-planet mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="col-image">Image</th>
+                                        <th class="col-name">Name</th>
+                                        <th class="col-local">Name (Local)</th>
+                                        <th class="col-degree">Full Degree</th>
+                                        <th class="col-speed">Speed</th>
+                                        <th class="col-retro">Retrograde</th>
+                                        <th class="col-combusted">Combusted</th>
+                                        <th class="col-longitude">Longitude</th>
+                                        <th class="col-sign">Sign</th>
+                                        <th class="col-sign-no">Sign No</th>
+                                        <th class="col-rashi">Rashi Lord</th>
+                                        <th class="col-nakshatra">Nakshatra</th>
+                                        <th class="col-pada">Pada</th>
+                                        <th class="col-nak-no">Nak No</th>
+                                        <th class="col-nak-lord">Nak Lord</th>
+                                        <th class="col-sub-lord">Sub Lord</th>
+                                        <th class="col-awastha">Awastha</th>
+                                        <th class="col-karakamsha">Karakamsha</th>
+                                        <th class="col-house">House</th>
+                                        <th class="col-type">Type</th>
+                                        <th class="col-lord-of">Lord Of</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for planet in report['planetary-positions'].data.planets %}
+                                    <tr>
+                                        <td><img src="{{ planet.image }}" alt="{{ planet.name }}" class="planet-image"></td>
+                                        <td>{{ planet.name }}</td>
+                                        <td>{{ planet.name_lan }}</td>
+                                        <td>{{ planet.full_degree }}</td>
+                                        <td>{{ planet.speed }}</td>
+                                        <td>{{ planet.is_retro }}</td>
+                                        <td>{{ planet.is_combusted }}</td>
+                                        <td>{{ planet.longitude }}</td>
+                                        <td>{{ planet.sign }}</td>
+                                        <td>{{ planet.sign_no }}</td>
+                                        <td>{{ planet.rashi_lord }}</td>
+                                        <td>{{ planet.nakshatra }}</td>
+                                        <td>{{ planet.nakshatra_pada }}</td>
+                                        <td>{{ planet.nakshatra_no }}</td>
+                                        <td>{{ planet.nakshatra_lord }}</td>
+                                        <td>{{ planet.sub_lord }}</td>
+                                        <td>{{ planet.awastha }}</td>
+                                        <td>{{ planet.karakamsha }}</td>
+                                        <td>{{ planet.house }}</td>
+                                        <td>{{ planet.type }}</td>
+                                        <td>{{ planet.lord_of }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Add spacing between the tables -->
+            <div class="table-spacer"></div>
+
+            <!-- Sub-Planetary Positions Section -->
+            {% if report['sub-planet-positions'].data.planets %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Sub-Planetary Positions</h2>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped table-bordered table-subplanet mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="col-name">Name</th>
+                                        <th class="col-local">Name (Local)</th>
+                                        <th class="col-degree">Full Degree</th>
+                                        <th class="col-longitude">Longitude</th>
+                                        <th class="col-sign">Sign</th>
+                                        <th class="col-sign-no">Sign No</th>
+                                        <th class="col-sign-name">Sign Name</th>
+                                        <th class="col-house">House</th>
+                                        <th class="col-nakshatra">Nakshatra</th>
+                                        <th class="col-pada">Pada</th>
+                                        <th class="col-nak-no">Nak No</th>
+                                        <th class="col-nak-lord">Nak Lord</th>
+                                        <th class="col-rashi-lord">Rashi Lord</th>
+                                        <th class="col-sub-lord">Sub Lord</th>
+                                        <th class="col-sub-sub">Sub Sub Lord</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for planet in report['sub-planet-positions'].data.planets %}
+                                    <tr>
+                                        <td class="px-2 py-1">{{ planet.name }}</td>
+                                        <td class="px-2 py-1">{{ planet.name_lan }}</td>
+                                        <td class="px-2 py-1">{{ planet.full_degree }}</td>
+                                        <td class="px-2 py-1">{{ planet.longitude }}</td>
+                                        <td class="px-2 py-1">{{ planet.sign }}</td>
+                                        <td class="px-2 py-1">{{ planet.sign_no }}</td>
+                                        <td class="px-2 py-1">{{ planet.sign_name }}</td>
+                                        <td class="px-2 py-1">{{ planet.house }}</td>
+                                        <td class="px-2 py-1">{{ planet.nakshatra }}</td>
+                                        <td class="px-2 py-1">{{ planet.nakshatra_pada }}</td>
+                                        <td class="px-2 py-1">{{ planet.nakshatra_no }}</td>
+                                        <td class="px-2 py-1">{{ planet.nakshatra_lord }}</td>
+                                        <td class="px-2 py-1">{{ planet.rashi_lord }}</td>
+                                        <td class="px-2 py-1">{{ planet.sub_lord }}</td>
+                                        <td class="px-2 py-1">{{ planet.sub_sub_lord }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Sub-Planetary Chart Section -->
+            {% if report['sub-planet-chart'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 80px;"></div> <!-- Add space after page break -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Sub-Planetary Chart</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Centered SVG chart -->
+                            <div class="text-center mb-4">
+                                <img src="{{ report['sub-planet-chart'].data.base64_image }}" 
+                                    alt="Sub-Planet Chart" 
+                                    class="img-fluid" 
+                                    style="max-width: 100%; height: auto;">
+                            </div>
+                            
+                            <!-- Sub-planet positions table -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered large-font-table">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>House</th>
+                                            <th>Zodiac Sign</th>
+                                            <th>Sub-Planets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for house_number, house_data in report['sub-planet-chart'].data.data.items() %}
+                                        <tr>
+                                            <td><strong>House {{ house_number }}</strong></td>
+                                            <td>
+                                                {% if house_data.sign_no == 1 %}Aries
+                                                {% elif house_data.sign_no == 2 %}Taurus
+                                                {% elif house_data.sign_no == 3 %}Gemini
+                                                {% elif house_data.sign_no == 4 %}Cancer
+                                                {% elif house_data.sign_no == 5 %}Leo
+                                                {% elif house_data.sign_no == 6 %}Virgo
+                                                {% elif house_data.sign_no == 7 %}Libra
+                                                {% elif house_data.sign_no == 8 %}Scorpio
+                                                {% elif house_data.sign_no == 9 %}Sagittarius
+                                                {% elif house_data.sign_no == 10 %}Capricorn
+                                                {% elif house_data.sign_no == 11 %}Aquarius
+                                                {% elif house_data.sign_no == 12 %}Pisces
+                                                {% endif %}
+                                                <span class="text-muted">(Sign #{{ house_data.sign_no }})</span>
+                                            </td>
+                                            <td>
+                                                {% if house_data.planet|length > 0 %}
+                                                <ul class="list-unstyled mb-0">
+                                                    {% for planet in house_data.planet %}
+                                                    <li>
+                                                        <strong>{{ planet.name }}</strong> 
+                                                        <small class="text-muted">(Symbol: {{ planet.symbol }})</small>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <span class="text-muted">No sub-planets in this house</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="height: 30px;"></div> <!-- Add space after page break -->
+                            <!-- Sub-Planet Legend -->
+                            <div class="card mt-4">
+                                <div class="card-header bg-light">
+                                    <h4 class="h5 mb-0">Sub-Planet Legend</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-1"><strong>Gulika (Gu)</strong>: Associated with obstacles and negative influences</li>
+                                                <li class="mb-1"><strong>Kaala (Ka)</strong>: Related to time and transformations</li>
+                                                <li class="mb-1"><strong>Mrityu (Mr)</strong>: Indicates major life transformations</li>
+                                                <li class="mb-1"><strong>Ardhaprahara (Ar)</strong>: Related to obstacles and challenges</li>
+                                                <li class="mb-1"><strong>Yamaghantaka (Ya)</strong>: Can counteract negative influences</li>
+                                                <li class="mb-1"><strong>Parivesh (Pa)</strong>: Related to surrounding environment</li>
+                                                <li class="mb-1"><strong>Dhuma (Dh)</strong>: Associated with confusion or illusions</li>
+                                                <li class="mb-1"><strong>Vyatripata (Vy)</strong>: Connected to sudden changes</li>
+                                                <li class="mb-1"><strong>Indrachapa (In)</strong>: Represents protection and grace</li>
+                                                <li class="mb-1"><strong>Upaketu (Up)</strong>: Related to spiritual matters</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Horoscope Chart Section -->
+            {% if report['D1'].success == 1 %}
+            <div style="height: 60px;"></div> <!-- Add space after page break -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Horoscope Chart</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Centered chart image -->
+                            <div class="text-center mb-4">
+                                <img src="{{ report['D1'].data.base64_image }}" 
+                                    alt="Horoscope Chart" 
+                                    class="img-fluid" 
+                                    style="max-width: 100%; height: auto;">
+                            </div>
+                            
+                            <!-- Planet positions table -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered large-font-table">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>House</th>
+                                            <th>Zodiac Sign</th>
+                                            <th>Planets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for house_number, house_data in report['D1'].data.data.items() %}
+                                        <tr>
+                                            <td><strong>{{ house_number }}</strong></td>
+                                            <td>
+                                                {% if house_data.sign_no == 1 %}Aries
+                                                {% elif house_data.sign_no == 2 %}Taurus
+                                                {% elif house_data.sign_no == 3 %}Gemini
+                                                {% elif house_data.sign_no == 4 %}Cancer
+                                                {% elif house_data.sign_no == 5 %}Leo
+                                                {% elif house_data.sign_no == 6 %}Virgo
+                                                {% elif house_data.sign_no == 7 %}Libra
+                                                {% elif house_data.sign_no == 8 %}Scorpio
+                                                {% elif house_data.sign_no == 9 %}Sagittarius
+                                                {% elif house_data.sign_no == 10 %}Capricorn
+                                                {% elif house_data.sign_no == 11 %}Aquarius
+                                                {% elif house_data.sign_no == 12 %}Pisces
+                                                {% endif %}
+                                                <span class="text-muted">(Sign #{{ house_data.sign_no }})</span>
+                                            </td>
+                                            <td>
+                                                {% if house_data.planet|length > 0 %}
+                                                <ul class="list-unstyled mb-0">
+                                                    {% for planet in house_data.planet %}
+                                                    <li><strong>{{ planet.name }}</strong> <small>({{ planet.symbol }})</small></li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Ascendant Report Section -->
+            {% if report['ascendant-report'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 70px;"></div> <!-- Add space after page break -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Ascendant Report</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Ascendant Header with Image and Title -->
+                            <div class="row mb-4 align-items-center">
+                                <div class="col-md-3 text-center">
+                                    <img src="{{ report['ascendant-report'].data.image }}" 
+                                        alt="{{ report['ascendant-report'].data.ascendant }} Symbol" 
+                                        class="img-fluid" style="max-width: 150px;">
+                                </div>
+                                <div style="height: 30px;"></div> <!-- Add space after page break -->
+                                <div class="col-md-9">
+                                    <h3 class="mb-2">{{ report['ascendant-report'].data.ascendant }} Ascendant</h3>
+                                    <p class="text-muted">Symbol: {{ report['ascendant-report'].data.symble }}</p>
+                                </div>
+                            </div>
+                            <div style="height: 30px;"></div> <!-- Add space after page break -->
+                            
+                            <!-- Ascendant Details Table -->
+                            <div class="table-responsive mb-4 large-font-table">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th class="bg-light" style="width: 30%;">Planetary Lord:</th>
+                                            <td>{{ report['ascendant-report'].data.planetary_lord }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Characteristics:</th>
+                                            <td>{{ report['ascendant-report'].data.characteristics }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Day of Fast:</th>
+                                            <td>{{ report['ascendant-report'].data.day_of_fast }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="bg-light">Lucky Stones:</th>
+                                            <td>
+                                                <ul class="list-unstyled mb-0">
+                                                    {% for stone in report['ascendant-report'].data.lucky_stone %}
+                                                    <li>• {{ stone }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="height: 30px;"></div> <!-- Add space after page break -->
+                            <!-- Ascendant Description -->
+                            <div class="card mb-0 border-0">
+                                <div class="card-header bg-light">
+                                    <h4 class="h5 mb-0">Personality Traits</h4>
+                                </div>
+                                <div class="card-body px-3">
+                                    <div class="article-content" style="font-size: 20px">
+                                        {{ report['ascendant-report'].data.article }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Vimshottari Dasha Section -->
+            {% if report['vimshottari-dasha'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 70px;"></div> <!-- Reduced space after page break -->
+
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white py-2">
+                            <h2 class="h4 mb-0">Vimshottari Dasha</h2>
+                        </div>
+                        <div style="height: 40px;"></div>
+                        <div class="card-body p-0">
+                            {% set maha_planets = report['vimshottari-dasha'].data.maha_dasha.keys()|list %}
+                            
+                            {% for maha_planet in maha_planets %}
+                                {% set maha_dasha = report['vimshottari-dasha'].data.maha_dasha[maha_planet] %}
+                                
+                                {% if not loop.first %}
+                                    <div class="page-break"></div>
+                                    <div style="height: 70px;"></div> <!-- Reduced space after page break -->
+                                     <div class="card-header bg-primary text-white py-2">
+                                        <h2 class="h4 mb-0">Vimshottari Dasha</h2>
+                                    </div>
+                                    <div style="height: 40px;"></div>
+                                {% endif %}
+                                
+                                <!-- Maha Dasha Header - more compact -->
+                                <div class="p-2 bg-light border-bottom">
+                                    <h3 class="h5 mb-0" style="font-size: 18pt">MAHA DASHA: {{ maha_planet|upper }} ({{ maha_dasha.start_date }} - {{ maha_dasha.end_date }})</h3>
+                                </div>
+                                <div style="height: 30px;"></div>
+                                
+                                {% set antar_planets = maha_dasha.antar_dasha.keys()|list %}
+                                {% set antar_count = antar_planets|length %}
+                                
+                                <!-- Add debug info if needed 
+                                <div class="small text-muted p-1">pages needed: 1</div>-->
+                                
+                                <div class="table-responsive">
+                                    <table class="table-vimshottari-dasha table-bordered mb-0">
+                                        {% for row in range(3) %}
+                                            <tr style="height: 32%;">
+                                                {% for col in range(3) %}
+                                                    {% set index = row * 3 + col %}
+                                                    {% if index < antar_count %}
+                                                        {% set antar_planet = antar_planets[index] %}
+                                                        {% set antar_data = maha_dasha.antar_dasha[antar_planet] %}
+                                                        <td class="p-1" style="width: 34%; vertical-align: top;">
+                                                            <div class="card mb-0 border">
+                                                                <div class="card-header py-1 text-center bg-light">
+                                                                    <h5 class="mb-0">ANTAR DASHA: {{ antar_planet|upper }}</h5>
+                                                                    <p class="mb-0" style="font-size: 10pt"><strong>{{ antar_data.start_time }} - {{ antar_data.end_time }}</strong></p>
+                                                                </div>
+                                                                <div class="card-body p-0">
+                                                                    <!-- Pratyantar Dasha Table - more compact -->
+                                                                    <table class="table-vimshottari-dasha table-sm table-bordered mb-0">
+                                                                        <thead>
+                                                                            <tr class="bg-light">
+                                                                                <th class="py-1" style="width: 50%">PRATYANTAR DASHA</th>
+                                                                                <th class="py-1" style="width: 50%">PERIOD</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {% if antar_data.pratyantar_dasha is defined %}
+                                                                                {% for pratyantar_planet, pratyantar_data in antar_data.pratyantar_dasha.items() %}
+                                                                                    <tr>
+                                                                                        <td class="py-1">{{ pratyantar_planet }}</td>
+                                                                                        <td class="py-1">
+                                                                                            {% if pratyantar_data.start_time != '--' and pratyantar_data.end_time != '--' %}
+                                                                                                {{ pratyantar_data.start_time }} - {{ pratyantar_data.end_time }}
+                                                                                            {% else %}
+                                                                                                --
+                                                                                            {% endif %}
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                {% endfor %}
+                                                                            {% else %}
+                                                                                <tr>
+                                                                                    <td colspan="2" class="text-center py-1">No Pratyantar Dasha data available</td>
+                                                                                </tr>
+                                                                            {% endif %}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    {% else %}
+                                                        <td style="width: 33.33%"></td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Mahadasha Analysis Section -->
+            {% if report['mahadasha-analysis'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 70px;"></div> <!-- Reduced space after page break -->
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white py-2">
+                                <h2 class="h4 mb-0">Mahadasha Analysis</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-center mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="badge bg-primary me-2 p-2">
+                                                    <span class="text-uppercase" style="font-size: 10pt">Maha Dasha</span>
+                                                </div>
+                                                <div class="badge bg-secondary me-2 p-2" style="font-size: 10pt">
+                                                    {{ report['pratyantardasha-analysis'].data.maha_dasha }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Career Insights</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['mahadasha-analysis'].data.analysis.career }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Health Outlook</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['mahadasha-analysis'].data.analysis.health }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Financial Prospects</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['mahadasha-analysis'].data.analysis.finance }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Relationship Dynamics</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['mahadasha-analysis'].data.analysis.relationships }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Antardasha Analysis Section -->
+            {% if report['antardasha-analysis'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 70px;"></div> <!-- Reduced space after page break -->
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white py-2">
+                                <h2 class="h4 mb-0">Antardasha Analysis</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-center mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="badge bg-primary me-2 p-2">
+                                                    <span class="text-uppercase">Maha Dasha</span>
+                                                </div>
+                                                <div class="badge bg-secondary me-2 p-2">
+                                                    {{ report['pratyantardasha-analysis'].data.maha_dasha }}
+                                                </div>
+                                                <i class="text-muted mx-2">→</i>
+                                                <div class="badge bg-primary me-2 p-2">
+                                                    <span class="text-uppercase">Antar Dasha</span>
+                                                </div>
+                                                 <div class="badge bg-secondary me-2 p-2">
+                                                    {{ report['pratyantardasha-analysis'].data.antar_dasha }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Career Insights</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['antardasha-analysis'].data.analysis.career }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Health Outlook</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['antardasha-analysis'].data.analysis.health }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Financial Prospects</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['antardasha-analysis'].data.analysis.finance }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Relationship Dynamics</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['antardasha-analysis'].data.analysis.relationships }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+            {% if report['pratyantardasha-analysis'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 70px;"></div> <!-- Reduced space after page break -->
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white py-2">
+                                <h2 class="h4 mb-0">Pratyantardasha Analysis</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-center mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="badge bg-primary me-2 p-2">
+                                                    <span class="text-uppercase">Maha Dasha</span>
+                                                </div>
+                                                <div class="badge bg-secondary me-2 p-2">
+                                                    {{ report['pratyantardasha-analysis'].data.maha_dasha }}
+                                                </div>
+                                                <i class="text-muted mx-2">→</i>
+                                                <div class="badge bg-primary me-2 p-2">
+                                                    <span class="text-uppercase">Antar Dasha</span>
+                                                </div>
+                                                <div class="badge bg-secondary me-2 p-2">
+                                                    {{ report['pratyantardasha-analysis'].data.antar_dasha }}
+                                                </div>
+                                                <i class="text-muted mx-2">→</i>
+                                                <div class="badge bg-primary me-2 p-2">
+                                                    <span class="text-uppercase">Pratyantar Dasha</span>
+                                                </div>
+                                                <div class="badge bg-secondary p-2">
+                                                    {{ report['pratyantardasha-analysis'].data.pratyantar_dasha }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Career Insights</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['pratyantardasha-analysis'].data.analysis.career }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Health Outlook</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['pratyantardasha-analysis'].data.analysis.health }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Financial Prospects</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['pratyantardasha-analysis'].data.analysis.finance }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-header bg-light">
+                                                <h3 class="h5 mb-0">Relationship Dynamics</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>{{ report['pratyantardasha-analysis'].data.analysis.relationships }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Kaal Chakra Dasha Section with Pagination -->
+            {% if report['kaal-chakra-dasha'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 70px;"></div> <!-- Add space after page break -->
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0" style="font-size: 18pt !important;">Kaal Chakra Dasha</h2>
+                        </div>
+                        <div class="card-body">
+                            {% set total_dashas = report['kaal-chakra-dasha'].data|length %}
+                            {% set dashas_per_page = 15 %}
+                            {% set total_pages = ((total_dashas / dashas_per_page)|round(0, 'ceil'))|int %}
+                            
+                            {% for page in range(total_pages) %}
+                                {% if page > 0 %}
+                                <div class="page-break"></div>
+                                <div style="height: 70px;"></div> <!-- Add space after page break -->
+                                {% endif %}
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        {% set start_index = page * dashas_per_page %}
+                                        {% set end_index = [start_index + dashas_per_page, total_dashas]|min %}
+                                        
+                                        {% for i in range(start_index, end_index, 3) %}
+                                        <tr>
+                                            {% for j in range(3) %}
+                                                {% if i + j < end_index %}
+                                                    {% set dasha = report['kaal-chakra-dasha'].data[i + j] %}
+                                                    <td class="p-2" style="width: 33%; vertical-align: top;">
+                                                        <div class="card mb-0">
+                                                            <div class="card-header text-center bg-light" style="padding: 0 !important">
+                                                                <h5 class="mb-1">{{ dasha.dahsa_sign|upper }} - {{ dasha.dahsa|upper }}</h5>
+                                                                <p class="mb-0"><strong>{{ dasha.start_date }} - {{ dasha.end_date }}</strong></p>
+                                                            </div>
+                                                            <div class="card-body p-0">
+                                                                <table class="table table-sm table-bordered mb-0">
+                                                                    <tbody>
+                                                                        {% for antar in dasha.antar_dasha %}
+                                                                        <tr>
+                                                                            <td style="width: 40%">{{ antar.dahsa }}</td>
+                                                                            <td style="width: 60%">{{ antar.start_date }} - {{ antar.end_date }}</td>
+                                                                        </tr>
+                                                                        {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                {% else %}
+                                                    <td style="width: 33%"></td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                                
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Yogini Dasha Section -->
+            {% if report['yogini-dasha'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 60px;"></div> <!-- Add space after page break -->
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Yogini Dasha</h2>
+                        </div>
+                        <div class="card-body">
+                            {% set dasha_count = report['yogini-dasha'].data.maha_dasha|length %}
+                            {% set pages_needed = ((dasha_count - 1) // 15) + 1 %}
+                            
+                            {% for page in range(pages_needed) %}
+                                {% if page > 0 %}
+                                <div class="page-break"></div>
+                                <div style="height: 70px;"></div> <!-- Add space after page break -->
+                                {% endif %}
+                                
+                                <div class="table-responsive {% if page < pages_needed - 1 %}mb-4{% endif %}">
+                                    <table class="table table-bordered mb-0">
+                                        {% for row in range(5) %}
+                                            {% set start_index = page * 15 + row * 3 %}
+                                            {% if start_index < dasha_count %}
+                                            <tr>
+                                                {% for col in range(3) %}
+                                                    {% set index = start_index + col %}
+                                                    {% if index < dasha_count %}
+                                                        {% set dasha = report['yogini-dasha'].data.maha_dasha[index] %}
+                                                        <td class="p-2" style="width: 33%; vertical-align: top;">
+                                                            <div class="card mb-0">
+                                                                <div class="card-header text-center bg-light py-2">
+                                                                    <h5 class="mb-1">{{ dasha.dasha|upper }}</h5>
+                                                                    <p class="mb-0"><strong>{{ dasha.start_date }} - {{ dasha.end_date }}</strong></p>
+                                                                </div>
+                                                                <div class="card-body p-0">
+                                                                    <table class="table table-sm table-bordered mb-0">
+                                                                        <tbody>
+                                                                            {% set antar_planets = dasha.antar_dasha.keys()|list %}
+                                                                            {% for k in range(antar_planets|length) %}
+                                                                                {% set antar_planet = antar_planets[k] %}
+                                                                                {% set start_date = dasha.start_date if k == 0 else dasha.antar_dasha[antar_planets[k-1]] %}
+                                                                                {% set end_date = dasha.antar_dasha[antar_planet] %}
+                                                                                <tr>
+                                                                                    <td style="width: 50%">{{ antar_planet }}</td>
+                                                                                    <td style="width: 50%">{{ start_date }} - {{ end_date }}</td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    {% else %}
+                                                        <td style="width: 33%"></td>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if report['yogas'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 50px;"></div> <!-- Add space after page break -->
+
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Astrological Yogas</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Initialize any_valid_yoga before all loops -->
+                            {% set any_valid_yoga = [] %}
+                            
+                            <!-- Regular Yogas -->
+                            {% set regular_yogas = ['raj_yoga', 'vipreet_raj_yoga', 'dhan_yoga', 'buddha_aditya_yoga', 
+                                                'gaja_kesari_yoga', 'amala_yoga', 'parvata_yoga', 'kahala_yoga', 
+                                                'chamara_yoga', 'sankha_yoga', 'lagnadhi_yoga', 'chandradhi_yoga',
+                                                'shubh_kartari_yoga', 'paap_kartari_yoga', 'saraswati_yoga', 
+                                                'lakshmi_yoga', 'kusuma_yoga', 'kalindi_yoga', 'kalpadruma_yoga',
+                                                'khadga_yoga', 'koorma_yoga', 'matsya_yoga', 'sarada_yoga', 
+                                                'srinatha_yoga', 'mridanga_yoga', 'bheri_yoga'] %}
+                            
+                            {% for yoga_key in regular_yogas %}
+                                {% if report['yogas'].data[yoga_key].is_valid == 'true' %}
+                                    {% if any_valid_yoga.append(1) %}{% endif %}
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h3 class="h5 mb-0">{{ report['yogas'].data[yoga_key].name }}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for detail in report['yogas'].data[yoga_key].content.detail %}
+                                                <p>{{ detail }}</p>
+                                            {% endfor %}
+                                            
+                                            {% if report['yogas'].data[yoga_key].content.remedies is defined %}
+                                                <div class="mt-3">
+                                                    <h4 class="h6">Remedies</h4>
+                                                    {% for remedy in report['yogas'].data[yoga_key].content.remedies %}
+                                                        <p>{{ remedy }}</p>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Pancha Mahapurusha Yogas -->
+                            {% set pancha_yogas = ['bhadra_pancha_mahapurusha_yoga', 'malavya_pancha_mahapurusha_yoga', 
+                                                'ruchaka_pancha_mahapurusha_yoga', 'hamsa_pancha_mahapurusha_yoga', 
+                                                'sasha_pancha_mahapurusha_yoga'] %}
+                            
+                            {% for yoga_key in pancha_yogas %}
+                                {% if report['yogas'].data.pancha_mahapurusha_yoga[yoga_key].is_valid == 'true' %}
+                                    {% if any_valid_yoga.append(1) %}{% endif %}
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h3 class="h5 mb-0">{{ report['yogas'].data.pancha_mahapurusha_yoga[yoga_key].name }}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for detail in report['yogas'].data.pancha_mahapurusha_yoga[yoga_key].content.detail %}
+                                                <p>{{ detail }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Lunar Yogas -->
+                            {% set lunar_yogas = ['sunapha_yoga', 'anapha_yoga', 'duradhara_yoga'] %}
+                            
+                            {% for yoga_key in lunar_yogas %}
+                                {% if report['yogas'].data.lunar_yoga[yoga_key].is_valid == 'true' %}
+                                    {% if any_valid_yoga.append(1) %}{% endif %}
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h3 class="h5 mb-0">{{ report['yogas'].data.lunar_yoga[yoga_key].name }}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for detail in report['yogas'].data.lunar_yoga[yoga_key].content.detail %}
+                                                <p>{{ detail }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Solar Yogas -->
+                            {% set solar_yogas = ['vesi_yoga', 'vasi_yoga', 'ubhayachari_yoga'] %}
+                            
+                            {% for yoga_key in solar_yogas %}
+                                {% if report['yogas'].data.solar_yoga[yoga_key].is_valid == 'true' %}
+                                    {% if any_valid_yoga.append(1) %}{% endif %}
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h3 class="h5 mb-0">{{ report['yogas'].data.solar_yoga[yoga_key].name }}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for detail in report['yogas'].data.solar_yoga[yoga_key].content.detail %}
+                                                <p>{{ detail }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- Trimurti Yogas -->
+                            {% set trimurti_yogas = ['hari_yoga', 'hara_yoga', 'brahma_yoga'] %}
+                            
+                            {% for yoga_key in trimurti_yogas %}
+                                {% if report['yogas'].data.trimurti_yogas[yoga_key].is_valid == 'true' %}
+                                    {% if any_valid_yoga.append(1) %}{% endif %}
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light py-2">
+                                            <h3 class="h5 mb-0">{{ report['yogas'].data.trimurti_yogas[yoga_key].name }}</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            {% for detail in report['yogas'].data.trimurti_yogas[yoga_key].content.detail %}
+                                                <p>{{ detail }}</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            <!-- If no yogas are present -->
+                            {% if any_valid_yoga|length == 0 %}
+                                <div class="alert alert-info">
+                                    <p class="mb-0">No significant yogas were found in your chart.</p>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Add pagination for large numbers of yogas -->
+                            {% set all_yogas = any_valid_yoga|length %}
+                            {% if all_yogas > 7 %}
+                                <div class="page-break"></div>
+                                <div style="height: 70px;"></div> <!-- Add space after page break -->
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="page-break"></div>
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div style="height: 50px;"></div> <!-- Add space after page break -->
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Astrological Doshas</h2>
+                        </div>
+                        <div class="card-body">
+                            {% set any_dosha_present = false %}
+                            
+                            <!-- Manglik Dosha Section -->
+                            {% if report['manglik-dosha'].success == 1 and report['manglik-dosha'].data.manglik_dosha == True %}
+                                {% set any_dosha_present = true %}
+                                <div class="card mb-4">
+                                    <div class="card-header bg-warning">
+                                        <h3 class="h5 mb-0">Manglik Dosha</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h4 class="h6 mb-3">What is Manglik Dosha?</h4>
+                                                <p>Manglik Dosha (also known as Mangal Dosha or Kuja Dosha) is an astrological condition that occurs when Mars (Mangal) is positioned in the 1st, 2nd, 4th, 7th, 8th, or 12th house of a person's birth chart. This planetary placement is believed to influence marriage, partnerships, and interpersonal relationships.</p>
+                                                
+                                                <p>According to Vedic astrology, Mars represents energy, passion, and aggression. When positioned in certain houses, its fiery influence may create challenges in maintaining harmonious relationships, particularly in marriage. The effects of Manglik Dosha vary based on:</p>
+                                                <ul>
+                                                    <li>The specific house Mars occupies</li>
+                                                    <li>Mars' strength and aspects with other planets</li>
+                                                    <li>The overall balance of the birth chart</li>
+                                                </ul>
+                                                
+                                                <p>It's important to understand that Manglik Dosha is not a curse but rather an astrological influence that can be managed through awareness, appropriate remedies, and life choices. Many people with Manglik Dosha lead happy and fulfilling married lives, especially when both partners share similar astrological conditions or when appropriate remedial measures are taken.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="mr-3">
+                                                        <strong>Strength:</strong> {{ report['manglik-dosha'].data.strength }} ({{ report['manglik-dosha'].data.percentage }}%)
+                                                    </div>
+                                                </div>
+                                                <!-- Visual indicator of strength - better for PDF -->
+                                                <div style="height: 20px; width: 100%; background-color: #e9ecef; position: relative; margin-bottom: 15px;">
+                                                    <div style="height: 20px; width: {{ report['manglik-dosha'].data.percentage }}%; 
+                                                        background-color: {% if report['manglik-dosha'].data.strength == 'High' %}#dc3545{% elif report['manglik-dosha'].data.strength == 'Medium' %}#ffc107{% else %}#17a2b8{% endif %};">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <h4 class="h6 mb-3">Impact Areas</h4>
+                                                <p>Manglik Dosha may influence these aspects of life:</p>
+                                                <ul>
+                                                    <li><strong>Marriage and Partnerships:</strong> Potential challenges in finding compatibility or maintaining harmony</li>
+                                                    <li><strong>Communication Patterns:</strong> May lead to more direct or passionate communication styles</li>
+                                                    <li><strong>Conflict Resolution:</strong> Possibly impacting how disagreements are approached</li>
+                                                    <li><strong>Career Considerations:</strong> Often associated with leadership qualities and competitive drive</li>
+                                                </ul>
+                                                
+                                                <p>The intensity of these influences correlates with the strength percentage indicated above.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3">
+                                            <h4 class="h6">Remedies</h4>
+                                            <ul class="list-group">
+                                                {% for remedy in report['manglik-dosha'].data.remedies %}
+                                                    <li class="list-group-item">{{ remedy }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Page break after Manglik Dosha -->
+                                <div class="page-break"></div>
+                                
+                            {% endif %}
+                            
+                            <!-- Sade Sati Section -->
+                            {% if report['sadhe-sati'].success == 1 and report['sadhe-sati'].data.sadhesati.result == 'true' %}
+                                {% set any_dosha_present = true %}
+                                <div class="card mb-4">
+                                    <div class="card-header bg-warning">
+                                        <h3 class="h5 mb-0">Sade Sati</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h4 class="h6 mb-3">What is Sade Sati?</h4>
+                                                <p>Sade Sati refers to a 7.5-year period when Saturn (Shani) transits through three signs: the zodiac sign before your Moon sign, your Moon sign itself, and the sign after your Moon sign. This 7.5-year cycle is considered one of the most significant transits in Vedic astrology, often associated with challenges, transformations, and important life lessons.</p>
+                                                
+                                                <p>The complete Sade Sati period is divided into three phases, each lasting approximately 2.5 years:</p>
+                                                <ol>
+                                                    <li><strong>Rising Phase (First 2.5 years):</strong> When Saturn transits the sign before your Moon sign. This is considered the preparatory period where life may begin to present new challenges.</li>
+                                                    <li><strong>Peak Phase (Middle 2.5 years):</strong> When Saturn transits directly through your Moon sign. This is often the most intense period, requiring patience, perseverance, and practical wisdom.</li>
+                                                    <li><strong>Setting Phase (Last 2.5 years):</strong> When Saturn transits the sign after your Moon sign. This period typically brings gradual resolution and the integration of lessons learned.</li>
+                                                </ol>
+                                                
+                                                <p>Contrary to popular misconception, Sade Sati is not simply a period of hardship but rather a time of significant growth, maturity, and spiritual evolution. Saturn, as the great teacher of the zodiac, brings important life lessons through experiences that may initially appear challenging but ultimately lead to greater wisdom and personal development.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <p><strong>Moon Sign:</strong> {{ report['sadhe-sati'].data.moon_sign }}</p>
+                                                <p><strong>Current Saturn Position:</strong> {{ report['sadhe-sati'].data.sadhesati.saturn_sign }} 
+                                                    {% if report['sadhe-sati'].data.sadhesati.saturn_retrograde == 'true' %}
+                                                        <span class="badge bg-secondary">Retrograde</span>
+                                                    {% endif %}
+                                                </p>
+                                                <p><strong>Consideration Date:</strong> {{ report['sadhe-sati'].data.sadhesati.consideration_date }}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-3">
+                                            <h4 class="h6">Current Phase</h4>
+                                            {% set current_phase = "" %}
+                                            {% set found_current = false %}
+                                            
+                                            {% for phase in report['sadhe-sati'].data.sadhesati_life_analysis %}
+                                                {% set phase_date = phase.date|default('') %}
+                                                {% if not found_current and phase_date >= report['sadhe-sati'].data.sadhesati.consideration_date %}
+                                                    {% set found_current = true %}
+                                                    {% if loop.index > 1 %}
+                                                        {% set prev_phase = report['sadhe-sati'].data.sadhesati_life_analysis[loop.index-2] %}
+                                                        {% if prev_phase.phase == 'RISING_START' %}
+                                                            {% set current_phase = "Rising Phase (First 2.5 years)" %}
+                                                        {% elif prev_phase.phase == 'PEAK_START' %}
+                                                            {% set current_phase = "Peak Phase (Middle 2.5 years)" %}
+                                                        {% elif prev_phase.phase == 'SETTING_START' %}
+                                                            {% set current_phase = "Setting Phase (Last 2.5 years)" %}
+                                                        {% endif %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            <p>{{ current_phase|default('Not Currently in Sade Sati') }}</p>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <h4 class="h6 mb-3">Typical Life Areas Influenced</h4>
+                                                <p>Sade Sati typically influences the following aspects of life:</p>
+                                                <ul>
+                                                    <li><strong>Career and Professional Life:</strong> Changes in job, career path, or professional responsibilities</li>
+                                                    <li><strong>Financial Management:</strong> Lessons about saving, investment, and material security</li>
+                                                    <li><strong>Relationships:</strong> Transformations in personal and professional relationships</li>
+                                                    <li><strong>Health:</strong> Increased awareness about health and well-being</li>
+                                                    <li><strong>Spiritual Growth:</strong> Deepening of philosophical understanding and spiritual practices</li>
+                                                </ul>
+                                                
+                                                <p>The specific influences will vary based on your individual birth chart and current life circumstances. Saturn's lessons are always tailored to your personal growth needs.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Remedies Section -->
+                                        <div class="mt-3">
+                                            <h4 class="h6">Remedies</h4>
+                                            <ul class="list-group">
+                                                {% for remedy in report['sadhe-sati'].data.remedies %}
+                                                    <li class="list-group-item">{{ remedy }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </div>
+                                        
+                                        <!-- Sade Sati Timeline - Always visible in PDF -->
+                                        <div class="mt-4">
+                                            <h5>Sade Sati Periods in Your Life</h5>
+                                            
+                                            {% set phases = [] %}
+                                            {% set current_phase = {'start': '', 'end': '', 'type': ''} %}
+                                            
+                                            {% for i in range(report['sadhe-sati'].data.sadhesati_life_analysis|length) %}
+                                                {% set entry = report['sadhe-sati'].data.sadhesati_life_analysis[i] %}
+                                                
+                                                {% if entry.phase.endswith('_START') %}
+                                                    {% if current_phase.start != '' %}
+                                                        {% if phases.append(current_phase) %}{% endif %}
+                                                    {% endif %}
+                                                    {% set current_phase = {'start': entry.date, 'end': '', 'type': entry.phase.split('_')[0], 'sign': entry.sign_name} %}
+                                                {% elif entry.phase.endswith('_END') and current_phase.start != '' and entry.phase.startswith(current_phase.type) %}
+                                                    {% set current_phase = current_phase|merge({'end': entry.date}) %}
+                                                    {% if phases.append(current_phase) %}{% endif %}
+                                                    {% set current_phase = {'start': '', 'end': '', 'type': ''} %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Phase</th>
+                                                            <th>Sign</th>
+                                                            <th>Start Date</th>
+                                                            <th>End Date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for phase in phases %}
+                                                            <tr>
+                                                                <td>{{ phase.type|capitalize }}</td>
+                                                                <td>{{ phase.sign }}</td>
+                                                                <td>{{ phase.start }}</td>
+                                                                <td>{{ phase.end }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Page break after Sade Sati -->
+                                <div class="page-break"></div>
+                                <!--<div style="height: 70px;"></div> -->
+                            {% endif %}
+                            
+                            <!-- Kaal Sarpa Yoga Section -->
+                            {% if report['kaal-sarpa-yoga'].success == 1 and report['kaal-sarpa-yoga'].data.result == 'true' %}
+                                {% set any_dosha_present = true %}
+                                <div class="card mb-4">
+                                    <div class="card-header bg-warning">
+                                        <h3 class="h5 mb-0">Kaal Sarpa Yoga</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row mb-4">
+                                            <div class="col-12">
+                                                <h4 class="h6 mb-3">What is Kaal Sarpa Yoga?</h4>
+                                                <p>Kaal Sarpa Yoga is a significant astrological formation that occurs when all seven traditional planets (Sun, Moon, Mercury, Venus, Mars, Jupiter, and Saturn) are positioned on one side of the lunar axis formed by Rahu (North Node) and Ketu (South Node). The term "Kaal Sarpa" translates to "Serpent of Time," symbolizing the cosmic serpent that influences the flow of life events.</p>
+                                                
+                                                <p>This yoga is believed to create a distinctive pattern in one's life journey, often characterized by periods of intense transformation, karmic fulfillment, and spiritual evolution. Rather than simply being negative or positive, Kaal Sarpa Yoga represents a powerful energetic configuration that amplifies both challenges and opportunities for growth.</p>
+                                                
+                                                <p>There are several variations of Kaal Sarpa Yoga, each with its unique characteristics and influences:</p>
+                                                <ul>
+                                                    <li><strong>Anant Kaal Sarpa Yoga:</strong> When Rahu is in the 12th house and Ketu in the 6th house</li>
+                                                    <li><strong>Kulik Kaal Sarpa Yoga:</strong> When Rahu is in the 1st house and Ketu in the 7th house</li>
+                                                    <li><strong>Vasuki Kaal Sarpa Yoga:</strong> When Rahu is in the 2nd house and Ketu in the 8th house</li>
+                                                    <li><strong>Shankhpal Kaal Sarpa Yoga:</strong> When Rahu is in the 3rd house and Ketu in the 9th house</li>
+                                                    <li><strong>Padma Kaal Sarpa Yoga:</strong> When Rahu is in the 4th house and Ketu in the 10th house</li>
+                                                    <li><strong>Mahapadma Kaal Sarpa Yoga:</strong> When Rahu is in the 5th house and Ketu in the 11th house</li>
+                                                    <li><strong>Takshak Kaal Sarpa Yoga:</strong> When Rahu is in the 6th house and Ketu in the 12th house</li>
+                                                </ul>
+                                                
+                                                <p>The influence of Kaal Sarpa Yoga is not fixed but evolves throughout one's lifetime, particularly during periods when planets transit through key positions relative to the nodes.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <p><strong>Type:</strong> {{ report['kaal-sarpa-yoga'].data.name }}</p>
+                                                <p><strong>Intensity:</strong> {{ report['kaal-sarpa-yoga'].data.intensity }}</p>
+                                                <p><strong>Direction:</strong> {{ report['kaal-sarpa-yoga'].data.direction }}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <h4 class="h6 mb-3">Life Areas Influenced</h4>
+                                                <p>Kaal Sarpa Yoga typically influences these aspects of life:</p>
+                                                <ul>
+                                                    <li><strong>Life Timing:</strong> May create distinctive patterns of delays followed by sudden progress</li>
+                                                    <li><strong>Hidden Potentials:</strong> Often associated with latent talents or abilities that emerge at significant life junctures</li>
+                                                    <li><strong>Spiritual Evolution:</strong> Frequently creates circumstances that deepen spiritual awareness</li>
+                                                    <li><strong>Karmic Patterns:</strong> May accelerate the resolution of karmic debts from past lives</li>
+                                                    <li><strong>Transformative Experiences:</strong> Often brings profound life changes that ultimately lead to growth</li>
+                                                </ul>
+                                                
+                                                <p>The {{ report['kaal-sarpa-yoga'].data.name }} form of this yoga, with its {{ report['kaal-sarpa-yoga'].data.intensity }} intensity, particularly influences areas related to {{ report['kaal-sarpa-yoga'].data.direction|lower }} energy movement in life.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Remedies Section -->
+                                        {% if report['kaal-sarpa-yoga'].data.remedies|length > 0 %}
+                                            <div class="mt-3">
+                                                <h4 class="h6">Remedies</h4>
+                                                <ul class="list-group">
+                                                    {% for remedy in report['kaal-sarpa-yoga'].data.remedies %}
+                                                        <li class="list-group-item">{{ remedy }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="page-break"></div>
+                            {% endif %}
+                            
+                            <!-- No Doshas Present Message -->
+                            {% if not any_dosha_present %}
+                                <div class="alert alert-success">
+                                    <p class="mb-0">No astrological doshas were found in your chart. This is generally considered favorable.</p>
+                                    
+                                    <div class="mt-3">
+                                        <p>In Vedic astrology, doshas are specific planetary combinations or positions that can create challenging influences in a person's life. The absence of major doshas in your birth chart suggests a more harmonious celestial alignment at the time of your birth.</p>
+                                        
+                                        <p>While every chart has its unique strengths and areas for growth, the absence of significant doshas means you may experience fewer of the specific challenges associated with these formations. This often allows for more straightforward progress in the related life areas.</p>
+                                        
+                                        <p>It's important to note that a comprehensive astrological analysis involves much more than just identifying doshas. Even without major doshas, your chart will still have its unique pattern of planetary influences that shape your life journey and personal evolution.</p>
+                                    </div>
+                                </div>
+                                <div class="page-break"></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ghata Chakra Section -->
+            {% if report['ghata-chakra'].success == 1 %}
+            <div style="height: 60px;"></div> <!-- Add space after page break -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Ghata Chakra</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Ghata Chakra Data -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light">
+                                            <h4 class="h5 mb-0">Your Ghata Chakra Details</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="bg-light" style="width: 40%;">Moon Sign:</th>
+                                                        <td>{{ report['ghata-chakra'].data.moon_sign }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="bg-light">Month:</th>
+                                                        <td>{{ report['ghata-chakra'].data.month }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="bg-light">Tithi:</th>
+                                                        <td>{{ report['ghata-chakra'].data.tithi }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="bg-light">Vaar (Day):</th>
+                                                        <td>{{ report['ghata-chakra'].data.vaar }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="bg-light">Yoga:</th>
+                                                        <td>{{ report['ghata-chakra'].data.yoga }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="bg-light">Karana:</th>
+                                                        <td>{{ report['ghata-chakra'].data.karana }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Ghata Chakra Explanation -->
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h4 class="h5 mb-0">Understanding Ghata Chakra</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>Ghata Chakra is an important predictive tool in Vedic astrology that examines the correlation between Moon sign, lunar month, tithi (lunar day), vaar (day of the week), yoga (auspicious time combination), and karana (half of a tithi).</p>
+                                    
+                                    <p>This system helps identify potential challenges or inauspicious periods for starting new ventures, travel, or making important decisions. According to traditional Vedic astrology texts, these factors combine to create energy patterns that may influence outcomes.</p>
+                                    
+                                    <h5 class="mt-4">Key Components:</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li><strong>Moon Sign:</strong> Influences emotions and mind</li>
+                                                <li><strong>Month:</strong> The current lunar month in the Hindu calendar</li>
+                                                <li><strong>Tithi:</strong> The lunar day based on the Moon's phase</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li><strong>Vaar:</strong> Day of the week with its planetary ruler</li>
+                                                <li><strong>Yoga:</strong> One of 27 divisions based on the sum of lunar and solar positions</li>
+                                                <li><strong>Karana:</strong> Half of a tithi, with 11 possible karanas</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Application and Remedies -->
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h4 class="h5 mb-0">Practical Applications and Remedies</h4>
+                                </div>
+                                <div class="card-body">
+                                    <p>The Ghata Chakra is traditionally consulted to determine favorable times for:</p>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="card border-primary h-100">
+                                                <div class="card-header bg-primary text-white">Applications</div>
+                                                <div class="card-body">
+                                                    <ul class="mb-0">
+                                                        <li>Starting new ventures or projects</li>
+                                                        <li>Travel planning and journey timing</li>
+                                                        <li>Making major financial decisions</li>
+                                                        <li>Scheduling important meetings</li>
+                                                        <li>Beginning educational pursuits</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card border-info h-100">
+                                                <div class="card-header bg-info text-white">Balancing Remedies</div>
+                                                <div class="card-body">
+                                                    <ul class="mb-0">
+                                                        <li>Reciting appropriate mantras</li>
+                                                        <li>Performing specific rituals (pujas)</li>
+                                                        <li>Charity and donations (daan)</li>
+                                                        <li>Gemstones and metals aligned with challenging planets</li>
+                                                        <li>Fasting on specific days</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="mb-0">When used in conjunction with your complete birth chart, Ghata Chakra provides an additional layer of timing guidance for optimal decision-making and action planning in your life.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Sudarshana Chakra Section -->
+            {% if report['sudarshana-chakra'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 60px;"></div> <!-- Add space after page break -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Sudarshana Chakra</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Sudarshana Chakra Chart -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light">
+                                            <h4 class="h5 mb-0">Your Sudarshana Chakra Chart</h4>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <img src="{{ report['sudarshana-chakra'].data.base64_image }}" class="img-fluid" alt="Sudarshana Chakra Chart">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light">
+                                            <h4 class="h5 mb-0">Understanding Sudarshana Chakra</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>The Sudarshana Chakra is an advanced predictive tool in Vedic astrology that integrates multiple systems to provide a comprehensive view of planetary influences. "Sudarshana" means "auspicious vision" in Sanskrit.</p>
+                                            
+                                            <p>This chart divides time into different cycles and shows how planets influence various areas of life during specific periods, making it valuable for timing decisions.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Key Components and Applications -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light">
+                                            <h4 class="h5 mb-0">Key Components</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul>
+                                                <li><strong>Chakra Layout:</strong> Concentric squares representing different levels of influence</li>
+                                                <li><strong>Planetary Positions:</strong> Placement of the nine planets in various houses</li>
+                                                <li><strong>Dasha System:</strong> Time periods ruled by specific planets</li>
+                                                <li><strong>Transits:</strong> Current planetary movements and their effects</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-header bg-light">
+                                            <h4 class="h5 mb-0">Practical Applications</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul>
+                                                <li>Timing guidance for major life decisions</li>
+                                                <li>Identification of opportunity and challenge periods</li>
+                                                <li>Career planning and business timing</li>
+                                                <li>Relationship compatibility assessment</li>
+                                                <li>Health management and spiritual growth</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Bhava Kundli Chart Section -->
+            {% if report['1'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 60px;"></div> <!-- Add space after page break -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Bhava Kundli Chart</h2>
+                        </div>
+                        <div style="height: 60px;"></div>
+                        <div class="card-body">
+                            <!-- Centered chart image -->
+                            <div class="text-center mb-4">
+                                <img src="{{ report['1'].data.base64_image }}" 
+                                    alt="Bhava Kundli Chart" 
+                                    class="img-fluid" 
+                                    style="max-width: 100%; height: auto;">
+                            </div>
+                            <div style="height: 60px;"></div>
+                            <!-- Planet positions table -->
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered large-font-table">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>House</th>
+                                            <th>Zodiac Sign</th>
+                                            <th>Planets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for house_number, house_data in report['1'].data.data.items() %}
+                                        <tr>
+                                            <td><strong>{{ house_number }}</strong></td>
+                                            <td>
+                                                {% if house_data.sign_no == 1 %}Aries
+                                                {% elif house_data.sign_no == 2 %}Taurus
+                                                {% elif house_data.sign_no == 3 %}Gemini
+                                                {% elif house_data.sign_no == 4 %}Cancer
+                                                {% elif house_data.sign_no == 5 %}Leo
+                                                {% elif house_data.sign_no == 6 %}Virgo
+                                                {% elif house_data.sign_no == 7 %}Libra
+                                                {% elif house_data.sign_no == 8 %}Scorpio
+                                                {% elif house_data.sign_no == 9 %}Sagittarius
+                                                {% elif house_data.sign_no == 10 %}Capricorn
+                                                {% elif house_data.sign_no == 11 %}Aquarius
+                                                {% elif house_data.sign_no == 12 %}Pisces
+                                                {% endif %}
+                                                <span class="text-muted">(Sign #{{ house_data.sign_no }})</span>
+                                            </td>
+                                            <td>
+                                                {% if house_data.planet|length > 0 %}
+                                                <ul class="list-unstyled mb-0">
+                                                    {% for planet in house_data.planet %}
+                                                    <li><strong>{{ planet.name }}</strong> <small>({{ planet.symbol }})</small></li>
+                                                    {% endfor %}
+                                                </ul>
+                                                {% else %}
+                                                <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Shadbala Section -->
+            {% if report['shadbala'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 60px;"></div> <!-- Add space after page break -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Shadbala (Six-fold Strength)</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Summary Table - Total Shadbala & Results -->
+                            <h5 class="card-title mb-3">Shadbala Summary</h5>
+                            <div class="table-responsive mb-4">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="table-primary">
+                                        <tr>
+                                            <th>Planet</th>
+                                            <th>Total Shadbala</th>
+                                            <th>Shadbala in Rupa</th>
+                                            <th>Minimum Required</th>
+                                            <th>Ratio</th>
+                                            <th>Rank</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                        <tr>
+                                            <td><strong>{{ planet }}</strong></td>
+                                            <td>{{ report['shadbala'].data.total_shadbala[planet] | round(2) }}</td>
+                                            <td>{{ report['shadbala'].data.shadbala_in_rupa[planet] | round(2) }}</td>
+                                            <td>{{ report['shadbala'].data.min_require[planet] }}</td>
+                                            <td>{{ report['shadbala'].data.ratio[planet] | round(2) }}</td>
+                                            <td>{{ report['shadbala'].data.rank[planet] }}</td>
+                                            <td>
+                                                {% if report['shadbala'].data.ratio[planet] >= 1 %}
+                                                <span class="badge bg-success">Strong</span>
+                                                {% else %}
+                                                <span class="badge bg-danger">Weak</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div style="height: 60px;"></div> 
+                            <!-- Detailed Shadbala Tables - All expanded for PDF -->
+                            <!-- 1. Sthana Bala (Positional Strength) -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-2 p-2 bg-light">1. Sthana Bala (Positional Strength)</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Planet</th>
+                                                <th>Uccha Bala</th>
+                                                <th>Saptavarghiya Bala</th>
+                                                <th>Yugmayugma Bhamsha Bala</th>
+                                                <th>Kendradi Bala</th>
+                                                <th>Drekkana Bala</th>
+                                                <th>Total Sthana Bala</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <tr>
+                                                <td><strong>{{ planet }}</strong></td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.sthana_bala.uccha_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.sthana_bala.saptavarghiya_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.sthana_bala.yugmayugma_bhamsha_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.sthana_bala.kendradi_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.sthana_bala.drekkana_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1 fw-bold">{{ report['shadbala'].data.sthana_bala.total[planet] | round(2) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 2. Digbala (Directional Strength) -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-2 p-2 bg-light">2. Digbala (Directional Strength)</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Planet</th>
+                                                <th>Digbala Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <tr>
+                                                <td><strong>{{ planet }}</strong></td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.digbala[planet] | round(2) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 3. Kala Bala (Temporal Strength) -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-2 p-2 bg-light">3. Kala Bala (Temporal Strength)</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Planet</th>
+                                                <th>Nattunnata Bala</th>
+                                                <th>Paksha Bala</th>
+                                                <th>Tribhaga Bala</th>
+                                                <th>Varshadhipati</th>
+                                                <th>Maasadipati</th>
+                                                <th>Vaaradhipati</th>
+                                                <th>Horadhipati</th>
+                                                <th>Ayana Bala</th>
+                                                <th>Yuddha Bala</th>
+                                                <th>Total Kala Bala</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <tr>
+                                                <td><strong>{{ planet }}</strong></td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.nattunnata_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.paksha_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.tribhaga_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.varshadhipati[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.maasadipati[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.vaaradhipati[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.horadhipati[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.ayana_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.kaal_bala.yuddha_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1 fw-bold">{{ report['shadbala'].data.kaal_bala.total[planet] | round(2) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 4. Other Balas (Combined) -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-2 p-2 bg-light">4. Other Balas (Naisargika, Cheshta, Drik)</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Planet</th>
+                                                <th>Naisargika Bala<br><small>(Natural Strength)</small></th>
+                                                <th>Cheshta Bala<br><small>(Motional Strength)</small></th>
+                                                <th>Drik Bala<br><small>(Aspectual Strength)</small></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <tr>
+                                                <td><strong>{{ planet }}</strong></td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.naisargika_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.chestha_bala[planet] | round(2) }}</td>
+                                                <td class="px-2 py-1">{{ report['shadbala'].data.drik_bala[planet] | round(2) }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="page-break"></div>
+                            <div style="height: 60px;"></div> 
+                            <!-- Shadbala Visualization -->
+                            <div class="mt-4">
+                                <h5 class="card-title">Shadbala Strength Visualization</h5>
+                                <div class="row">
+                                    <!-- Bar Chart for Total Shadbala -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header bg-light py-2">
+                                                <h6 class="mb-0">Total Shadbala Strengths</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                                <div class="mb-2">
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <span><strong>{{ planet }}</strong></span>
+                                                        <span>{{ report['shadbala'].data.total_shadbala[planet] | round(2) }}</span>
+                                                    </div>
+                                                    <div class="progress" style="height: 10px;">
+                                                        {% set max_val = 600 %}
+                                                        {% set percent = (report['shadbala'].data.total_shadbala[planet] / max_val * 100) | round %}
+                                                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ percent }}%" 
+                                                            aria-valuenow="{{ report['shadbala'].data.total_shadbala[planet] | round(2) }}" 
+                                                            aria-valuemin="0" aria-valuemax="{{ max_val }}"></div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Ratio Bar Chart -->
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card">
+                                            <div class="card-header bg-light py-2">
+                                                <h6 class="mb-0">Shadbala Ratios (Relative to Minimum Required)</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                                <div class="mb-2">
+                                                    <div class="d-flex justify-content-between mb-1">
+                                                        <span><strong>{{ planet }}</strong></span>
+                                                        <span>Ratio: {{ report['shadbala'].data.ratio[planet] | round(2) }}</span>
+                                                    </div>
+                                                    <div class="progress" style="height: 10px;">
+                                                        {% set max_ratio = 2 %}
+                                                        {% set percent = (report['shadbala'].data.ratio[planet] / max_ratio * 100) | round %}
+                                                        {% if report['shadbala'].data.ratio[planet] >= 1 %}
+                                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ percent }}%" 
+                                                                aria-valuenow="{{ report['shadbala'].data.ratio[planet] | round(2) }}" 
+                                                                aria-valuemin="0" aria-valuemax="{{ max_ratio }}"></div>
+                                                        {% else %}
+                                                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ percent }}%" 
+                                                                aria-valuenow="{{ report['shadbala'].data.ratio[planet] | round(2) }}" 
+                                                                aria-valuemin="0" aria-valuemax="{{ max_ratio }}"></div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Composite Friendship Section -->
+            {% if report['composite-friendship'].success == 1 %}
+            <div class="page-break"></div>
+            <div style="height: 60px;"></div>
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="h4 mb-0">Composite Friendship</h2>
+                        </div>
+                        <div class="card-body">
+                            <!-- Introduction -->
+                            <div class="mb-4">
+                                <p>In Vedic astrology, planetary relationships are classified into different types of friendships that influence how planets interact in your birth chart. Below are three key classifications of planetary relationships that affect your astrological profile.</p>
+                            </div>
+                            
+                            <!-- Natural Friendship Section -->
+                            <h5 class="mb-3">1. Natural Friendship</h5>
+                            <p class="text-muted mb-3">Natural friendship is based on the inherent relationships between planets according to classical Vedic astrology.</p>
+                            
+                            <div class="table-responsive mb-5">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Planets</th>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <th scope="col" class="text-center">{{ planet }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                        <tr>
+                                            <th scope="row">{{ planet }}</th>
+                                            {% for other_planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <td class="text-center">
+                                                {% set relation = report['composite-friendship'].data.natural_friendship[planet][other_planet] %}
+                                                {% if relation == '-' %}
+                                                <span class="text-muted">-</span>
+                                                {% elif relation == 'Friend' %}
+                                                <span class="text-success">Friend</span>
+                                                {% elif relation == 'Enemy' %}
+                                                <span class="text-danger">Enemy</span>
+                                                {% elif relation == 'Neutral' %}
+                                                <span class="text-secondary">Neutral</span>
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Temporary Friendship Section -->
+                            <h5 class="mb-3">2. Temporary Friendship</h5>
+                            <p class="text-muted mb-3">Temporary friendship is based on the relative positions of planets in your birth chart and changes with each chart.</p>
+                            
+                            <div class="table-responsive mb-5">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Planets</th>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <th scope="col" class="text-center">{{ planet }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for planet in ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'] %}
+                                        <tr>
+                                            <th scope="row">{{ planet }}</th>
+                                            {% for other_planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <td class="text-center">
+                                                {% set relation = report['composite-friendship'].data.temporary_friendship[planet][other_planet] %}
+                                                {% if relation == '-' %}
+                                                <span class="text-muted">-</span>
+                                                {% elif relation == 'Friend' %}
+                                                <span class="text-success">Friend</span>
+                                                {% elif relation == 'Enemy' %}
+                                                <span class="text-danger">Enemy</span>
+                                                {% elif relation == 'Neutral' %}
+                                                <span class="text-secondary">Neutral</span>
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Five-Fold Friendship Section -->
+                            <h5 class="mb-3">3. Five-Fold Friendship (Panchada Maitri)</h5>
+                            <p class="text-muted mb-3">Five-fold friendship combines both natural and temporary relationships to create a comprehensive view of planetary relationships in your chart.</p>
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th scope="col">Planets</th>
+                                            {% for planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <th scope="col" class="text-center">{{ planet }}</th>
+                                            {% endfor %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for planet in ['Sun', 'Moon', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn'] %}
+                                        <tr>
+                                            <th scope="row">{{ planet }}</th>
+                                            {% for other_planet in ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'] %}
+                                            <td class="text-center">
+                                                {% set relation = report['composite-friendship'].data.five_fold_friendship[planet][other_planet] %}
+                                                {% if relation == '-' %}
+                                                <span class="text-muted">-</span>
+                                                {% elif relation == 'Best Friend' %}
+                                                <span class="text-primary fw-bold">Best Friend</span>
+                                                {% elif relation == 'Friend' %}
+                                                <span class="text-success">Friend</span>
+                                                {% elif relation == 'Neutral' %}
+                                                <span class="text-secondary">Neutral</span>
+                                                {% elif relation == 'Enemy' %}
+                                                <span class="text-warning">Enemy</span>
+                                                {% elif relation == 'Bitter Enemy' %}
+                                                <span class="text-danger">Bitter Enemy</span>
+                                                {% endif %}
+                                            </td>
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Legend -->
+                            <div class="mt-4 mb-2">
+                                <h6>Legend:</h6>
+                                <span class="text-primary fw-bold me-3">Best Friend</span>
+                                <span class="text-success me-3">Friend</span>
+                                <span class="text-secondary me-3">Neutral</span>
+                                <span class="text-warning me-3">Enemy</span>
+                                <span class="text-danger me-3">Bitter Enemy</span>
+                            </div>
+                            
+                            <div class="alert alert-info mt-3">
+                                <p class="mb-0 small"><strong>Note:</strong> These planetary relationships influence how planets interact in your chart and affect different areas of your life. The Five-Fold Friendship provides the most comprehensive view and is particularly useful for advanced astrological analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

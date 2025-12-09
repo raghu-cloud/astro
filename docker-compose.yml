@@ -1,0 +1,119 @@
+services:
+  # db:
+  #   image: postgres:15
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - POSTGRES_DB=${DB_NAME}
+  #     - POSTGRES_USER=${DB_USER}
+  #     - POSTGRES_PASSWORD=${DB_PASSWORD}
+  #   ports:
+  #     - "5432:5432"
+  #   restart: unless-stopped
+
+  influxdb3-core:
+    container_name: influxdb3-core
+    image: influxdb:3-core
+    ports:
+      - 8181:8181
+    command:
+      - influxdb3
+      - serve
+      - --node-id=node0
+      - --object-store=s3
+      - --bucket=${S3_BUCKET}
+      - --aws-access-key-id=${AWS_ACCESS_KEY_ID}
+      - --aws-secret-access-key=${AWS_SECRET_ACCESS_KEY}
+      - --aws-default-region=ap-south-1
+
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - grafana-storage:/var/lib/grafana:rw
+    ports:
+      - 3000:3000
+    networks:
+      - monitoring
+
+
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             gunicorn --bind 0.0.0.0:8000 --workers 4 --timeout 120 My_AI_Guruji.wsgi:application"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - output_recordings_volume:/app/output_recordings
+      - voice_samples_volume:/app/voice_samples
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - ASTRO_CONN=${ASTRO_CONN}
+      - DB_URI=${DB_URI}
+      - DEBUG=${DEBUG:-False}
+      - LOAD_TEST_MODE=${LOAD_TEST_MODE:-false}
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - monitoring
+
+  celery_worker:
+    build:
+      context: .
+    container_name: celery_worker
+    command: celery -A My_AI_Guruji worker --loglevel=info
+    depends_on:
+      - redis
+    volumes:
+      - .:/code
+    working_dir: /code
+    networks:
+      - monitoring
+
+  celery_beat:
+    build:
+      context: .
+    container_name: celery_beat
+    command: celery -A My_AI_Guruji beat --loglevel=info
+    depends_on:
+      - redis
+    volumes:
+      - .:/code
+    working_dir: /code
+    networks:
+      - monitoring
+
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  output_recordings_volume:
+  voice_samples_volume:
+  grafana-storage:
+  influxdb-storage:
+
+networks:
+  monitoring:
+    driver: bridge

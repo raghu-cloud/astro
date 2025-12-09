@@ -1,0 +1,36 @@
+from pydantic import BaseModel
+
+class ChatRequest(BaseModel):
+    user_message: str
+    phone_number: str 
+
+class VoiceChatResponse(BaseModel):
+    transcription: str
+    response: str
+    whatsapp: dict
+
+
+class KundliDetails(BaseModel):
+    full_name: str
+    gender: str
+    day: int
+    month: int
+    year: int
+    place: str
+    hour: int
+    min: int
+    sec: int
+    chart_type: str
+
+class KundliRequest(BaseModel):
+    details: KundliDetails
+
+
+class PanchangDetails(BaseModel):
+    day: int
+    month: int
+    year: int
+    place: str
+
+class PanchangRequest(BaseModel):
+    details: PanchangDetails
