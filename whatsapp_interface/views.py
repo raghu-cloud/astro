@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import json
 import requests
 from .utils import is_valid_whatsapp_message, process_whatsapp_message, download_media, upload_media, send_audio_message, process_whatsapp_message_audio_transcript
-from langchain_agent.utils import generate_transcription_from_audio
+# from langchain_agent.utils import generate_transcription_from_audio
 
 load_dotenv()
 WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN")
@@ -104,7 +104,8 @@ def handle_message(request):
                 file_path = download_media(media_id)
                 if file_path:
                     # Transcribe the audio
-                    transcription = generate_transcription_from_audio(file_path)
+                    transcription = "test"
+                    # transcription = generate_transcription_from_audio(file_path)
                     if transcription:
                         logger.info(f"Transcription: {transcription}")
                         # Process the transcription as a text message

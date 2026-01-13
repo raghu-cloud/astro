@@ -78,6 +78,26 @@ class User(models.Model):
     def __str__(self):
         # Return the username if present in the JSON, otherwise a default string.
         return self.user_profile.get("username", "Unnamed User")
+
+
+
+class UserProfile(models.Model):
+    id = models.CharField(
+        max_length=255,
+        primary_key=True
+    ) 
+    user_id=models.IntegerField(
+        unique=True,null=True
+    )
+    username = models.CharField(max_length=255)
+
+  
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.username
     
 
 class LogType(Enum):

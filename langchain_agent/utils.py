@@ -421,43 +421,81 @@ def decision_node(chat_id,content,message_id,message_type):
     finally:
         logger.info("completed")
 
-def get_lat_lon_photon(place):
-    """
-    Retrieves the latitude and longitude for a given place name using the Photon geocoding API.
+# def get_lat_lon_photon(place):
+#     """
+#     Retrieves the latitude and longitude for a given place name using the Photon geocoding API.
 
-    This function sends a GET request to the Photon API with the place query and parses
-    the response to extract geographic coordinates.
+#     This function sends a GET request to the Photon API with the place query and parses
+#     the response to extract geographic coordinates.
+
+#     Parameters:
+#     - place (str): The name of the location to geocode (e.g., city, address, landmark).
+
+#     Returns:
+#     - (lat, lon) (tuple of str or None): 
+#         - A tuple containing the latitude and longitude as strings if found.
+#         - Returns (None, None) if no coordinates are found or an error occurs.
+
+#     Notes:
+#     - Uses the first match returned by the Photon API.
+#     - Logs any exceptions and returns (None, None) in case of failure.
+#     """
+#     try:
+#         url = "https://photon.komoot.io/api/"
+#         params = {
+#             "q": place
+#         }
+#         response = requests.get(url, params=params)
+#         data = response.json()
+
+#         if data['features']:
+#             lon, lat = data['features'][0]['geometry']['coordinates']
+#             return str(lat), str(lon)
+#         else:
+#             return None, None
+#     except Exception as e:
+#         logger.error(f"Error occurred: {e}")
+#         return None, None
+#     finally:
+#         logger.info("completed")
+
+def get_lat_lon_nomatim(place):
+    """
+    Retrieves latitude and longitude for a given place using Nominatim (OpenStreetMap).
 
     Parameters:
-    - place (str): The name of the location to geocode (e.g., city, address, landmark).
+    - place (str): Location name
 
     Returns:
-    - (lat, lon) (tuple of str or None): 
-        - A tuple containing the latitude and longitude as strings if found.
-        - Returns (None, None) if no coordinates are found or an error occurs.
-
-    Notes:
-    - Uses the first match returned by the Photon API.
-    - Logs any exceptions and returns (None, None) in case of failure.
+    - (lat, lon): tuple of strings or (None, None)
     """
     try:
-        url = "https://photon.komoot.io/api/"
+        url = "https://nominatim.openstreetmap.org/search"
         params = {
-            "q": place
+            "q": place,
+            "format": "json",
+            "limit": 1
         }
-        response = requests.get(url, params=params)
+        headers = {
+            "User-Agent": "endee-testing-platform/1.0"
+        }
+
+        response = requests.get(url, params=params, headers=headers, timeout=5)
+        response.raise_for_status()
         data = response.json()
 
-        if data['features']:
-            lon, lat = data['features'][0]['geometry']['coordinates']
-            return str(lat), str(lon)
-        else:
-            return None, None
+        if data:
+            return data[0]["lat"], data[0]["lon"]
+
+        return None, None
+
     except Exception as e:
         logger.error(f"Error occurred: {e}")
         return None, None
+
     finally:
         logger.info("completed")
+
 
 
 
@@ -485,6 +523,7 @@ def kundli_node(chat_id,message_id,message_type):
     - In case of failure, logs the error and stores a fallback error response.
     """
     try:
+   
         start_total = time.time()
         latest_message = store_detail.objects.filter(metric="user_message", user_id=chat_id).latest('id').message_text
         latest_bot_message_obj = store_detail.objects.filter(
@@ -511,12 +550,14 @@ def kundli_node(chat_id,message_id,message_type):
                 break
             except Exception as e:
                 logger.error(f"error occurred: {e}")
+    
         model_name=model_write.split('/')[0]
         model_version=model_write.split('/')[1]
         cost = completion_cost(completion_response=response)
         tokens=token_counter( model=model_write,
         messages=[{ "content": system_prompt,"role": "user"}])
         llm_end_kundli = time.time()
+     
         log_point_to_db(health_metric="kundli_node", phase="llm_ask_missing_details_time", latency= llm_end_kundli - llm_start_kundli, model=model_name, model_version= model_version,tokens=tokens,cost=cost, success= True)
 
         content=response.choices[0].message.content
@@ -528,12 +569,14 @@ def kundli_node(chat_id,message_id,message_type):
             logger.error(f"An error occurred: {e}")
 
         if len(details["place"]) > 0:
-            details['lat'], details['lon'] = get_lat_lon_photon(details["place"])
+            details['lat'], details['lon'] = get_lat_lon_nomatim(details["place"])
+        print(details)
 
 
         if all(len(v) > 0 for v in details.values()):
+            print("hello")
 
-            telegram_interface.utils.send_text_message(chat_id,"We are generating your personalised Kundli, Please wait for a minute or two....")
+            # telegram_interface.utils.send_text_message(chat_id,"We are generating your personalised Kundli, Please wait for a minute or two....")
 
             end_total = time.time()
             log_point_to_db(health_metric="kundli_node", phase="total_time", latency=end_total - start_total, success= True)
@@ -1448,7 +1491,7 @@ def build_state_graph(user_message, chat_id, message_id, user_message_type):
         today_date = datetime.today().strftime("%Y-%m-%d")
         if "Kundli PDF generated successfully" in response_text:
 
-            telegram_interface.utils.send_telegram_document(chat_id, f"{chat_id}_kundli.pdf")
+            # telegram_interface.utils.send_telegram_document(chat_id, f"{chat_id}_kundli.pdf")
 
             os.remove(f"{chat_id}_kundli.pdf")
             for i in range(1,20):
@@ -1459,7 +1502,7 @@ def build_state_graph(user_message, chat_id, message_id, user_message_type):
                 else:
                     logger.info(f"File not found:" )
        
-            return ""
+            return f"https://astro-ai.s3.ap-south-1.amazonaws.com/{chat_id}_kundli.pdf"
         return response_text
     except Exception as e:
         logger.error(f"Error {e}")
@@ -1516,6 +1559,13 @@ def build_state_graph_test(user_message, chat_id, message_id, user_message_type)
     except Exception as e:
         logger.error(f"Error {e}")
         return "Type again"
+
+
+        
+
+def test(user_message,user_id):
+    response_text = build_state_graph(user_message, user_id, 100, LogType.USER.value)
+    return response_text
 
 def build_state_graph_notification(user_message, chat_id, message_id, user_message_type,graph):
 
@@ -1597,9 +1647,9 @@ def build_state_graph_notification(user_message, chat_id, message_id, user_messa
 
     return response_text
 
-def test(user_message):
-    response_text = build_state_graph(user_message, 100, 100, LogType.USER.value)
-    return response_text
+# def test(user_message):
+#     response_text = build_state_graph(user_message, 100, 100, LogType.USER.value)
+#     return response_text
 
 
 def run_llm_pipeline(user_message, memory, platform, chat_id, message_id, user_message_type):
@@ -1685,97 +1735,97 @@ def postprocess_response(response_text):
     return response_text
 
 
-def generate_transcription_from_audio(path):
-    """Transcribes audio to text using OpenAI Whisper."""
-    try:
-        client = OpenAI(api_key=openai_api_key)
-        with open(path, "rb") as audio_file:
-            transcription = client.audio.transcriptions.create(
-                model="whisper-1", file=audio_file
-            )
-        return transcription.text
-    except Exception as e:
-        logger.error(f"Failed to transcribe audio: {e}")
-        return None
+# def generate_transcription_from_audio(path):
+#     """Transcribes audio to text using OpenAI Whisper."""
+#     try:
+#         client = OpenAI(api_key=openai_api_key)
+#         with open(path, "rb") as audio_file:
+#             transcription = client.audio.transcriptions.create(
+#                 model="whisper-1", file=audio_file
+#             )
+#         return transcription.text
+#     except Exception as e:
+#         logger.error(f"Failed to transcribe audio: {e}")
+#         return None
 
 
 
-with open("config.json", "r") as f:
-    config = json.load(f)
+# with open("config.json", "r") as f:
+#     config = json.load(f)
 
 
-def text_to_speech(text, output_file="response.mp4"):
-    """Converts text to speech using multiple providers and saves as MP4."""
-    try:
-        provider = config.get("tts_provider", "amazon_polly")
-        mp3_file = "response.mp3"
+# def text_to_speech(text, output_file="response.mp4"):
+#     """Converts text to speech using multiple providers and saves as MP4."""
+#     try:
+#         provider = config.get("tts_provider", "amazon_polly")
+#         mp3_file = "response.mp3"
 
-        if provider == "amazon_polly":
-            polly_client = boto3.client(
-                "polly",
-                aws_access_key_id=config["aws_access_key"],
-                aws_secret_access_key=config["aws_secret_key"],
-                region_name=config["region"],
-            )
-            response = polly_client.synthesize_speech(
-                Text=text,
-                OutputFormat="mp3",
-                VoiceId=config["models"]["amazon_polly"]["voice"],
-            )
-            with open(mp3_file, "wb") as out:
-                out.write(response["AudioStream"].read())
+#         if provider == "amazon_polly":
+#             polly_client = boto3.client(
+#                 "polly",
+#                 aws_access_key_id=config["aws_access_key"],
+#                 aws_secret_access_key=config["aws_secret_key"],
+#                 region_name=config["region"],
+#             )
+#             response = polly_client.synthesize_speech(
+#                 Text=text,
+#                 OutputFormat="mp3",
+#                 VoiceId=config["models"]["amazon_polly"]["voice"],
+#             )
+#             with open(mp3_file, "wb") as out:
+#                 out.write(response["AudioStream"].read())
 
-        elif provider == "gtts":
-            # Google TTS
-            gtts_config = config["models"]["gtts"]
-            tts = gTTS(
-                text=text, lang=gtts_config["language"], slow=gtts_config["slow"]
-            )
-            tts.save(mp3_file)
+#         elif provider == "gtts":
+#             # Google TTS
+#             gtts_config = config["models"]["gtts"]
+#             tts = gTTS(
+#                 text=text, lang=gtts_config["language"], slow=gtts_config["slow"]
+#             )
+#             tts.save(mp3_file)
 
-        elif provider == "openai":
-            # OpenAI TTS API
-            openai_config = config["models"]["openai"]
-            headers = {"Authorization": f"Bearer {openai_config['api_key']}"}
-            data = {"input": text, "model": "tts-1", "voice": openai_config["voice"]}
-            response = requests.post(
-                "https://api.openai.com/v1/audio/speech", headers=headers, json=data
-            )
-            with open(mp3_file, "wb") as out:
-                out.write(response.content)
+#         elif provider == "openai":
+#             # OpenAI TTS API
+#             openai_config = config["models"]["openai"]
+#             headers = {"Authorization": f"Bearer {openai_config['api_key']}"}
+#             data = {"input": text, "model": "tts-1", "voice": openai_config["voice"]}
+#             response = requests.post(
+#                 "https://api.openai.com/v1/audio/speech", headers=headers, json=data
+#             )
+#             with open(mp3_file, "wb") as out:
+#                 out.write(response.content)
 
-        elif provider == "elevenlabs":
-            # ElevenLabs API
-            elevenlabs_config = config["models"]["elevenlabs"]
-            headers = {
-                "Content-Type": "application/json",
-                "xi-api-key": elevenlabs_config["api_key"],
-            }
-            data = {
-                "text": text,
-                "voice_id": elevenlabs_config["voice_id"],
-                "model_id": "eleven_multilingual_v1",
-            }
-            response = requests.post(
-                "https://api.elevenlabs.io/v1/text-to-speech",
-                headers=headers,
-                json=data,
-            )
-            with open(mp3_file, "wb") as out:
-                out.write(response.content)
+#         elif provider == "elevenlabs":
+#             # ElevenLabs API
+#             elevenlabs_config = config["models"]["elevenlabs"]
+#             headers = {
+#                 "Content-Type": "application/json",
+#                 "xi-api-key": elevenlabs_config["api_key"],
+#             }
+#             data = {
+#                 "text": text,
+#                 "voice_id": elevenlabs_config["voice_id"],
+#                 "model_id": "eleven_multilingual_v1",
+#             }
+#             response = requests.post(
+#                 "https://api.elevenlabs.io/v1/text-to-speech",
+#                 headers=headers,
+#                 json=data,
+#             )
+#             with open(mp3_file, "wb") as out:
+#                 out.write(response.content)
 
-        else:
-            raise ValueError("Unsupported TTS provider")
+#         else:
+#             raise ValueError("Unsupported TTS provider")
 
-        # Convert MP3 to MP4 with speed adjustment
-        speed = config.get("speed", 1.0)  # Default speed is 1.0 (normal)
-        command = f"ffmpeg -y -i {mp3_file} -filter:a 'atempo={speed}' -c:a aac -b:a 192k -movflags +faststart {output_file}"
-        subprocess.run(command, shell=True, check=True)
+#         # Convert MP3 to MP4 with speed adjustment
+#         speed = config.get("speed", 1.0)  # Default speed is 1.0 (normal)
+#         command = f"ffmpeg -y -i {mp3_file} -filter:a 'atempo={speed}' -c:a aac -b:a 192k -movflags +faststart {output_file}"
+#         subprocess.run(command, shell=True, check=True)
 
-        logger.info(f"MP4 audio file saved: {output_file}")
-        return output_file
+#         logger.info(f"MP4 audio file saved: {output_file}")
+#         return output_file
 
-    except Exception as e:
-        logger.error(f"Failed to convert text to speech: {e}")
-        return None
+#     except Exception as e:
+#         logger.error(f"Failed to convert text to speech: {e}")
+#         return None
 

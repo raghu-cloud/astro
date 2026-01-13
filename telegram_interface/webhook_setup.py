@@ -25,7 +25,7 @@ print(SECRET_TOKEN)
 print(TELEGRAM_BOT_TOKEN)
 
 
-WEBHOOK_URL = "https://a8c2eac06a36.ngrok-free.app/api/telegram-webhook"
+WEBHOOK_URL = "https://b970ab96fc8e.ngrok-free.app/api/telegram-webhook"
 # WEBHOOK_URL="https://aoek8g2pvg.execute-api.ap-south-1.amazonaws.com/api/telegram-webhook"
 # WEBHOOK_URL = "https://3b0e-14-142-182-251.ngrok-free.app/api/telegram-webhook"
 # WEBHOOK_URL='https://m60ig3k6w7.execute-api.ap-south-1.amazonaws.com/api/telegram-webhook'

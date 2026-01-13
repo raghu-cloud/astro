@@ -6,7 +6,7 @@ from django.conf import settings
 import json
 import logging
 from .utils import send_text_message, process_telegram_message, download_telegram_voice, process_telegram_message_audio_transcript, send_text_message_with_buttons
-from langchain_agent.utils import generate_transcription_from_audio, get_user_memory, run_llm_pipeline
+from langchain_agent.utils import  get_user_memory, run_llm_pipeline
 from ai_services.utils.stt_utils import generate_stt, generate_with_deepgram_en
 import asyncio
 # from ai_services.utils.stt_utils import generate_stt

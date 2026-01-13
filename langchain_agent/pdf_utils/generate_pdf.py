@@ -871,6 +871,7 @@ def call_divine(details, user_id, msg_id, msg_type):
     chat_id = user_id
 
     try:
+        print("hello")
         
       
 
@@ -900,6 +901,8 @@ def call_divine(details, user_id, msg_id, msg_type):
             "https://astroapi-3.divineapi.com/indian-api/v1/bhava-kundli/1",
           "https://astroapi-3.divineapi.com/indian-api/v1/vimshottari-dasha",
         ]
+        # print("hello")
+        print(urls)
       
 
         filtered_endpoints = [url.rstrip("/").split("/")[-1] for url in urls]
@@ -1132,6 +1135,140 @@ async def store_key_value_pair_kundli_in_db(data, user_id):
 ROXY_API_KEY = os.getenv("ROXY_API")
 DIVINE_API_KEY = os.getenv("DIVINE_API_KEY")
 DIVINE_API_TOKEN = os.getenv("DIVINE_API_TOKEN")
+
+
+def generate_horoscope(details, user_id,category='daily horoscope'):
+    
+
+    """
+    Calls the horoscope API with the provided details and handles the response.
+
+    Parameters:
+    - details (dict): The payload or input data required by the API.
+    - user_id (str or int): The ID of the user for whom the request is being made.
+    - category (str): The category or type of API being called (e.g., 'kundli', 'horoscope').
+
+    Returns:
+    - dict or None: Returns the API response as a dictionary if successful, None otherwise.
+
+    Notes:
+    - You can customize the actual API endpoint and headers inside the try block.
+    """
+    start_total = time.time()
+    chat_id = user_id
+    
+ 
+    # today_date = datetime.today().strftime("%Y-%m-%d")
+    # pdf_path=download_pdf(user_id,f'horoscope_{today_date}')
+    # if pdf_path:
+    #     return
+
+  
+
+    
+    url = f"https://roxyapi.com/api/v1/data/astro/astrology/personality?token={ROXY_API_KEY}"
+    payload = {
+        "name": details["name"],
+        "birthdate": details["dob"],
+        "time_of_birth": details["time_of_birth"],
+    }
+    print("1")
+    try:
+        print("zxdf")
+
+        response = requests.post(url, json=payload)
+        result={}
+
+        if response.status_code == 200:
+            print("sdf")
+     
+            data = response.json()
+            print(data)
+           
+  
+    
+    # Assuming the response contains these fields
+            name = data.get('name', 'Name not found')  # Replace 'name' with the actual key from the response
+            zodiac = data.get('zodiac_sign', 'Zodiac not found') 
+   
+            result["data"] = {
+        "name": details['name'],
+        "zodiac_sign": zodiac
+    }       
+            print(data)
+            try:
+                today = datetime.today()
+
+                if 'daily horoscope' in category:
+                    url_dasha = "https://astroapi-5.divineapi.com/api/v2/daily-horoscope"
+                
+                
+                # User birth details
+                    details =   {
+                                'sign': result['data']['zodiac_sign'],
+                                'day': today.day,
+                                'month': today.month,
+                                'year': today.year,
+                                'tzone': 5.5
+                            }
+                elif 'weekly horoscope' in category:
+                    url_dasha = "https://astroapi-5.divineapi.com/api/v2/weekly-horoscope"
+                
+                
+                # User birth details
+                    details =   {
+                                'sign': result['data']['zodiac_sign'],
+                                'week':'current',
+                                'tzone': 5.5
+                            }
+                
+                headers = {"Authorization": f"Bearer {DIVINE_API_TOKEN}"}
+                payload = {
+                                "api_key": DIVINE_API_KEY,
+                                **details,
+                                "lan": "en",
+                            }
+                horoscope_divine_api_start_time=time.time()
+                response = requests.post(url_dasha, headers=headers, data=payload)
+                horoscope_divine_api_end_time=time.time()
+
+                log_point_to_db(health_metric="horoscope_tool_node", phase="divine_api_time", latency=  horoscope_divine_api_end_time - horoscope_divine_api_start_time,  success= True)
+                
+              
+                if response.status_code == 200:
+                    api_response=response.json()
+               
+                
+ 
+                else:
+                    logger.error(f"Error: {response.status_code}, {response.text}")  # Handle error
+                print(api_response)
+       
+        
+                if 'daily horoscope' in category:
+    
+                    result['data']['predictions'] = api_response["data"]["prediction"]
+                if 'weekly horoscope' in category:
+                    result['data']['week']=api_response['data']['week']
+                    result['data']['predictions'] = api_response["data"]["weekly_horoscope"]
+                print(result)
+              
+
+                end_total = time.time()
+
+                log_point_to_db(health_metric="horoscope_tool_node", phase="total_time", latency= end_total - start_total,  success= True)
+
+                        
+            except Exception as e:
+                logger.error("Exception",e)
+
+        print("sdf")
+        print(result)
+      
+        return result
+        
+    except Exception as e:
+        logger.error(e)
     
 
 

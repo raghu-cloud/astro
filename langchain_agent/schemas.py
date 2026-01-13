@@ -34,3 +34,10 @@ class PanchangDetails(BaseModel):
 
 class PanchangRequest(BaseModel):
     details: PanchangDetails
+class OnboardingRequest(BaseModel):
+    name: str
+    dob: str  # Format: YYYY-MM-DD
+    time_of_birth: str  # Format: HH:MM:00
+    birth_place: str
+    gender: str
+    client_timezone: str

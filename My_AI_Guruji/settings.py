@@ -35,8 +35,10 @@ LOAD_TEST_MODE = os.getenv("LOAD_TEST_MODE", "false").lower() == "true"
 # ALLOWED_HOSTS = ["caa0-14-142-182-251.ngrok-free.app","452b-14-142-182-251.ngrok-free.app","dc85-14-142-182-251.ngrok-free.app","5490-14-142-182-251.ngrok-free.app","cbb8-14-142-182-251.ngrok-free.app","7442-2402-e280-2130-9b-5804-7b6e-feb5-e0a0.ngrok-free.app","13.234.137.84","gizps5ygzd.execute-api.ap-south-1.amazonaws.com","e0a6-14-142-182-251.ngrok-free.app","127.0.0.1","0.0.0.0","13.232.8.20","3.6.73.48", "daad-14-142-182-251.ngrok-free.app","c475-2402-e280-2130-9b-a993-c680-5786-14f4.ngrok-free.app","683f-2401-4900-62f7-8928-3cf3-778f-bce8-7f4.ngrok-free.app","08f8-13-232-8-20.ngrok-free.app","fcac-14-142-182-251.ngrok-free.app","3c35-2402-e280-2130-9b-c8d1-f042-3adf-9770.ngrok-free.app","k3bd7xxi8v.ap-south-1.awsapprunner.com","localhost","vhkmb2acgy.ap-south-1.awsapprunner.com","2c0a-2401-4900-62f7-ea1d-859-fc5f-4ad8-d101.ngrok-free.app", "efff-14-142-182-251.ngrok-free.app", "4593-14-142-182-251.ngrok-free.app", "05d8-14-142-182-251.ngrok-free.app"]
 
 
-ALLOWED_HOSTS = ["a8c2eac06a36.ngrok-free.app","1923-14-142-182-251.ngrok-free.app","48e3-2401-4900-900f-49b1-d9b7-802a-39c-23fc.ngrok-free.app","2027-2401-4900-6310-367d-2c24-346a-1810-1695.ngrok-free.app","7994-14-142-182-251.ngrok-free.app","c7d7-2402-e280-2130-9b-8066-61a0-b2aa-2f5f.ngrok-free.app","3b0e-14-142-182-251.ngrok-free.app","b954-49-207-192-40.ngrok-free.app","27ca-2402-e280-2130-9b-7895-fe05-9d21-be2e.ngrok-free.app","m60ig3k6w7.execute-api.ap-south-1.amazonaws.com","3.6.73.48","ozga7ur7gb.execute-api.ap-south-1.amazonaws.com","65.2.141.89","caa0-14-142-182-251.ngrok-free.app","452b-14-142-182-251.ngrok-free.app","dc85-14-142-182-251.ngrok-free.app","5490-14-142-182-251.ngrok-free.app","cbb8-14-142-182-251.ngrok-free.app","7442-2402-e280-2130-9b-5804-7b6e-feb5-e0a0.ngrok-free.app","13.234.137.84","gizps5ygzd.execute-api.ap-south-1.amazonaws.com","e0a6-14-142-182-251.ngrok-free.app","127.0.0.1","0.0.0.0","13.232.8.20","3.6.73.48", "daad-14-142-182-251.ngrok-free.app","c475-2402-e280-2130-9b-a993-c680-5786-14f4.ngrok-free.app","683f-2401-4900-62f7-8928-3cf3-778f-bce8-7f4.ngrok-free.app","08f8-13-232-8-20.ngrok-free.app","fcac-14-142-182-251.ngrok-free.app","3c35-2402-e280-2130-9b-c8d1-f042-3adf-9770.ngrok-free.app","k3bd7xxi8v.ap-south-1.awsapprunner.com","localhost","vhkmb2acgy.ap-south-1.awsapprunner.com","2c0a-2401-4900-62f7-ea1d-859-fc5f-4ad8-d101.ngrok-free.app", "efff-14-142-182-251.ngrok-free.app",  "05d8-14-142-182-251.ngrok-free.app", "712bbd5e67a2.ngrok-free.app"]
+ALLOWED_HOSTS = ["b970ab96fc8e.ngrok-free.app","9a5167792628.ngrok-free.app","6eb4e6da8a66.ngrok-free.app","a8c2eac06a36.ngrok-free.app","1923-14-142-182-251.ngrok-free.app","48e3-2401-4900-900f-49b1-d9b7-802a-39c-23fc.ngrok-free.app","2027-2401-4900-6310-367d-2c24-346a-1810-1695.ngrok-free.app","7994-14-142-182-251.ngrok-free.app","c7d7-2402-e280-2130-9b-8066-61a0-b2aa-2f5f.ngrok-free.app","3b0e-14-142-182-251.ngrok-free.app","b954-49-207-192-40.ngrok-free.app","27ca-2402-e280-2130-9b-7895-fe05-9d21-be2e.ngrok-free.app","m60ig3k6w7.execute-api.ap-south-1.amazonaws.com","3.6.73.48","ozga7ur7gb.execute-api.ap-south-1.amazonaws.com","65.2.141.89","caa0-14-142-182-251.ngrok-free.app","452b-14-142-182-251.ngrok-free.app","dc85-14-142-182-251.ngrok-free.app","5490-14-142-182-251.ngrok-free.app","cbb8-14-142-182-251.ngrok-free.app","7442-2402-e280-2130-9b-5804-7b6e-feb5-e0a0.ngrok-free.app","13.234.137.84","gizps5ygzd.execute-api.ap-south-1.amazonaws.com","e0a6-14-142-182-251.ngrok-free.app","127.0.0.1","0.0.0.0","13.232.8.20","3.6.73.48", "daad-14-142-182-251.ngrok-free.app","c475-2402-e280-2130-9b-a993-c680-5786-14f4.ngrok-free.app","683f-2401-4900-62f7-8928-3cf3-778f-bce8-7f4.ngrok-free.app","08f8-13-232-8-20.ngrok-free.app","fcac-14-142-182-251.ngrok-free.app","3c35-2402-e280-2130-9b-c8d1-f042-3adf-9770.ngrok-free.app","k3bd7xxi8v.ap-south-1.awsapprunner.com","localhost","vhkmb2acgy.ap-south-1.awsapprunner.com","2c0a-2401-4900-62f7-ea1d-859-fc5f-4ad8-d101.ngrok-free.app", "efff-14-142-182-251.ngrok-free.app",  "05d8-14-142-182-251.ngrok-free.app", "712bbd5e67a2.ngrok-free.app"]
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = ["https://m60ig3k6w7.execute-api.ap-south-1.amazonaws.com","https://vhkmb2acgy.ap-south-1.awsapprunner.com","https://gizps5ygzd.execute-api.ap-south-1.amazonaws.com","https://13shk1mg04.execute-api.ap-south-1.amazonaws.com"]
@@ -65,14 +67,16 @@ INSTALLED_APPS = [
     'telegram_interface',
     'whatsapp_interface',
     'ai_services',
-    'django_celery_beat'
+    'django_celery_beat',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -250,3 +254,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CSRF_TRUSTED_ORIGINS = ["https://daad-14-142-182-251.ngrok-free.app"]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 CELERY_BROKER_URL = 'redis://redis:6379/0'
+CLERK_API_SECRET_KEY = os.getenv("CLERK_API_SECRET_KEY")
+CORS_ALLOW_CREDENTIALS = True
+
