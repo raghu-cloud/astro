@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     gcc \
     python3-dev \
     build-essential \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
