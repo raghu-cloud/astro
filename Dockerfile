@@ -22,22 +22,23 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Install Python dependencies
+# Copy only requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Install additional AI dependencies
+# Install PyTorch CPU version first (much faster, ~70% smaller)
 RUN pip install --no-cache-dir \
-    git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678 \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+    torch==2.6.0 \
+    torchaudio==2.6.0 \
+    torchvision==0.21.0 \
+    --index-url https://download.pytorch.org/whl/cpu
 
+# Install remaining Python dependencies
+RUN pip install --no-cache-dir \
+    -r requirements.txt \
+    git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678
 
-# Install dependencies
-RUN pip install --no-cache-dir playwright
-
-# Install Playwright browsers
-RUN playwright install
-RUN playwright install --with-deps
+# Install Playwright browsers (only once with deps, chromium only for smaller size)
+RUN playwright install --with-deps chromium
 
 # Optionally, if you use chromium only:
 # RUN playwright install chromium

@@ -1,0 +1,46 @@
+version: 1.0
+runtime: python312
+build:
+  commands:
+    pre-build:
+      - echo "Installing system dependencies..."
+      - apt-get update
+      - apt-get install -y git ffmpeg libpq-dev gcc python3-dev build-essential libgl1 libglib2.0-0 postgresql-client wget
+      - apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
+    build:
+      - echo "Installing Python dependencies..."
+      - pip install --upgrade pip
+      - pip install --no-cache-dir torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+      - pip install --no-cache-dir -r requirements.txt
+      - pip install --no-cache-dir git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678
+      - pip install --no-cache-dir playwright
+      - playwright install --with-deps chromium
+    post-build:
+      - echo "Creating necessary directories..."
+      - mkdir -p /app/notifications/logs /app/notifications/daily /app/notifications/weekly
+      - chmod +x /app/notifications/run_notifications.sh || true
+      - echo "Collecting static files..."
+      - python manage.py collectstatic --noinput || true
+      - echo "Running migrations..."
+      - python manage.py migrate --noinput || true
+
+run:
+  runtime-version: 3.12
+  command: gunicorn --workers 2 --timeout 300 --bind 0.0.0.0:8000 My_AI_Guruji.wsgi:application
+  network:
+    port: 8000
+    env: APP_PORT
+  env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: PYTHONDONTWRITEBYTECODE
+      value: "1"
+    - name: DJANGO_SETTINGS_MODULE
+      value: "My_AI_Guruji.settings"
+  # Add your environment variables here or configure them in AWS App Runner console
+  # secrets:
+  #   - name: DATABASE_URL
+  #     value-from: "arn:aws:secretsmanager:region:account-id:secret:secret-name"
+  #   - name: SECRET_KEY
+  #     value-from: "arn:aws:secretsmanager:region:account-id:secret:secret-name"
+
