@@ -1,34 +1,27 @@
 version: 1.0
-runtime: python3.11
+runtime: python311  # Updated: Use python311 (not python3.11) for revised App Runner build
 build:
   commands:
     pre-build:
-      - echo "Installing system dependencies..."
-      - apt-get update
-      - apt-get install -y git ffmpeg libpq-dev gcc python3-dev build-essential libgl1 libglib2.0-0 postgresql-client wget
-      - apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 libasound2
+      - echo "=== Pre-build Phase ==="
+      # Note: System package installation (apt-get) is NOT supported in App Runner managed runtimes
+      # If you need system dependencies, consider using Docker-based deployment instead
+      - python3 --version
+      - pip3 --version
     build:
-      - echo "Installing Python dependencies..."
-      - pip install --upgrade pip
-      - pip install --no-cache-dir torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
-      - pip install --no-cache-dir -r requirements.txt
-      - pip install --no-cache-dir git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678
-      - pip install --no-cache-dir playwright
-      - playwright install --with-deps chromium
+      - echo "=== Build Phase: Installing Python dependencies ==="
+      - pip3 install --upgrade pip setuptools wheel
+      # Install PyTorch CPU version
+      - pip3 install --no-cache-dir torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+      # Install main requirements
+      - pip3 install --no-cache-dir -r requirements.txt
+      # Install audiotools from git
+      - pip3 install --no-cache-dir git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678
+      # Note: Playwright requires system dependencies that are NOT available in managed runtime
+      # Consider using alternative solutions or Docker-based deployment
     post-build:
-      - echo "Creating necessary directories..."
-      - mkdir -p /app/notifications/logs /app/notifications/daily /app/notifications/weekly
-      - chmod +x /app/notifications/run_notifications.sh || true
-      - echo "Collecting static files..."
-      - python manage.py collectstatic --noinput || true
-      - echo "Running migrations..."
-      - python manage.py migrate --noinput || true
-
-run:
-  command: gunicorn --workers 2 --timeout 300 --bind 0.0.0.0:8000 My_AI_Guruji.wsgi:application
-  network:
-    port: 8000
-    env: APP_PORT
+      - echo "=== Post-build Phase: Django setup ==="
+      - python3 manage.py collectstatic --noinput
   env:
     - name: PYTHONUNBUFFERED
       value: "1"
@@ -36,10 +29,34 @@ run:
       value: "1"
     - name: DJANGO_SETTINGS_MODULE
       value: "My_AI_Guruji.settings"
-  # Add your environment variables here or configure them in AWS App Runner console
+
+run:
+  runtime-version: 3.11  # Explicitly specify Python 3.11
+  pre-run:
+    # Pre-run commands execute before each application start
+    - echo "=== Pre-run Phase ==="
+    - python3 manage.py migrate --noinput
+    - mkdir -p /tmp/notifications/logs /tmp/notifications/daily /tmp/notifications/weekly
+  command: gunicorn --workers 2 --threads 4 --timeout 300 --bind 0.0.0.0:8000 --access-logfile - --error-logfile - My_AI_Guruji.wsgi:application
+  network:
+    port: 8000
+    env: PORT  # AWS App Runner sets PORT environment variable
+  env:
+    - name: PYTHONUNBUFFERED
+      value: "1"
+    - name: PYTHONDONTWRITEBYTECODE
+      value: "1"
+    - name: DJANGO_SETTINGS_MODULE
+      value: "My_AI_Guruji.settings"
+    - name: WEB_CONCURRENCY
+      value: "2"
+  # Configure secrets in AWS Secrets Manager or Systems Manager Parameter Store
+  # Then reference them here:
   # secrets:
-  #   - name: DATABASE_URL
-  #     value-from: "arn:aws:secretsmanager:region:account-id:secret:secret-name"
   #   - name: SECRET_KEY
-  #     value-from: "arn:aws:secretsmanager:region:account-id:secret:secret-name"
+  #     value-from: "arn:aws:secretsmanager:us-east-1:123456789012:secret:astro-ai/prod:SECRET_KEY::"
+  #   - name: DB_PASSWORD
+  #     value-from: "arn:aws:secretsmanager:us-east-1:123456789012:secret:astro-ai/prod:DB_PASSWORD::"
+  #   - name: OPENAI_API_KEY
+  #     value-from: "parameter-name"  # For SSM Parameter Store (simpler syntax)
 
