@@ -1,26 +1,19 @@
 version: 1.0
-runtime: python311  # Updated: Use python311 (not python3.11) for revised App Runner build
+runtime: python311
 build:
   commands:
     pre-build:
-      - echo "=== Pre-build Phase ==="
-      # Note: System package installation (apt-get) is NOT supported in App Runner managed runtimes
-      # If you need system dependencies, consider using Docker-based deployment instead
+      - echo "Pre-build phase starting"
       - python3 --version
       - pip3 --version
     build:
-      - echo "=== Build Phase: Installing Python dependencies ==="
+      - echo "Installing Python dependencies"
       - pip3 install --upgrade pip setuptools wheel
-      # Install PyTorch CPU version
       - pip3 install --no-cache-dir torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
-      # Install main requirements
       - pip3 install --no-cache-dir -r requirements.txt
-      # Install audiotools from git
       - pip3 install --no-cache-dir git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678
-      # Note: Playwright requires system dependencies that are NOT available in managed runtime
-      # Consider using alternative solutions or Docker-based deployment
     post-build:
-      - echo "=== Post-build Phase: Django setup ==="
+      - echo "Collecting static files"
       - python3 manage.py collectstatic --noinput
   env:
     - name: PYTHONUNBUFFERED
@@ -31,16 +24,15 @@ build:
       value: "My_AI_Guruji.settings"
 
 run:
-  runtime-version: 3.11  # Explicitly specify Python 3.11
+  runtime-version: 3.11
   pre-run:
-    # Pre-run commands execute before each application start
-    - echo "=== Pre-run Phase ==="
+    - echo "Running pre-run commands"
     - python3 manage.py migrate --noinput
     - mkdir -p /tmp/notifications/logs /tmp/notifications/daily /tmp/notifications/weekly
   command: gunicorn --workers 2 --threads 4 --timeout 300 --bind 0.0.0.0:8000 --access-logfile - --error-logfile - My_AI_Guruji.wsgi:application
   network:
     port: 8000
-    env: PORT  # AWS App Runner sets PORT environment variable
+    env: PORT
   env:
     - name: PYTHONUNBUFFERED
       value: "1"
@@ -50,13 +42,4 @@ run:
       value: "My_AI_Guruji.settings"
     - name: WEB_CONCURRENCY
       value: "2"
-  # Configure secrets in AWS Secrets Manager or Systems Manager Parameter Store
-  # Then reference them here:
-  # secrets:
-  #   - name: SECRET_KEY
-  #     value-from: "arn:aws:secretsmanager:us-east-1:123456789012:secret:astro-ai/prod:SECRET_KEY::"
-  #   - name: DB_PASSWORD
-  #     value-from: "arn:aws:secretsmanager:us-east-1:123456789012:secret:astro-ai/prod:DB_PASSWORD::"
-  #   - name: OPENAI_API_KEY
-  #     value-from: "parameter-name"  # For SSM Parameter Store (simpler syntax)
 
