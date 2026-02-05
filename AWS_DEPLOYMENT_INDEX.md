@@ -417,3 +417,11 @@ aws logs tail /aws/apprunner/astro-ai-service --follow
 **Based on:** [AWS App Runner Documentation](https://docs.aws.amazon.com/apprunner/latest/dg/config-file-examples.html)
 **Project:** AstroAI Django Application
 
+
+
+
+
+
+
+
+

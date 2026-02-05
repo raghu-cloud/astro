@@ -35,7 +35,7 @@ def handle_generate_kundli(details, user_id):
         if details["chart_type"] not in ["north", "south"]:
             return {"error": "Please provide a valid chart-type either north or south"}
         
-        lat,lon = get_lat_lon_photon(details["place"])
+        lat,lon = get_lat_lon_nomatim(details["place"])
         if lat is None or lon is None:
             print(lat,lon)
             return {"error": "Could not determine latitude/longitude for the given place."}
@@ -81,6 +81,7 @@ def handle_generate_kundli(details, user_id):
         user_place = details["place"].capitalize()
 
         match, score = get_closest_match(user_place, place_list)
+        print(match, score)
 
         if match:
             user_place = match
@@ -105,6 +106,7 @@ def handle_generate_kundli(details, user_id):
 
         
         data = asyncio.run(merge_fetch(urls=urls, headers=headers, payload=payload, payload_dasha=payload_dasha, extra_urls=extra_urls, chart_type=details["chart_type"] ))
+        print(data)
 
         if "error" in data:
             return {"error": data["error"]}
@@ -176,9 +178,9 @@ def handle_generate_kundli(details, user_id):
             if os.path.exists(f"page{i}_mp_{user_id}.pdf"):
                 os.remove(f"page{i}_mp_{user_id}.pdf")
                 os.remove(f"page{i}_output_{user_id}.html")
-                print(f"Removed: {f"page{i}_mp_{user_id}.pdf"}")
+                print(f"Removed: page{i}_mp_{user_id}.pdf")
             else:
-                print(f"File not found: {f"page{i}_mp_{user_id}.pdf"}")
+                print(f"File not found: page{i}_mp_{user_id}.pdf")
 
         return s3_url
     
@@ -191,7 +193,7 @@ def handle_panchang_details(details):
         # pdf_s3_url=check_pdf_exists(user_id,'kundli')
         # if pdf_s3_url!=0:
         #     return pdf_s3_url
-        lat,lon = get_lat_lon_photon(details["place"])
+        lat,lon = get_lat_lon_nomatim(details["place"])
         if lat is None or lon is None:
             return {"error": "Could not determine latitude/longitude for the given place."}
         
@@ -336,6 +338,44 @@ def check_for_error(result):
 #         return None, None
 
 
+def get_lat_lon_nomatim(place):
+    """
+    Retrieves latitude and longitude for a given place using Nominatim (OpenStreetMap).
+
+    Parameters:
+    - place (str): Location name
+
+    Returns:
+    - (lat, lon): tuple of strings or (None, None)
+    """
+    try:
+        url = "https://nominatim.openstreetmap.org/search"
+        params = {
+            "q": place,
+            "format": "json",
+            "limit": 1
+        }
+        headers = {
+            "User-Agent": "endee-testing-platform/1.0"
+        }
+
+        response = requests.get(url, params=params, headers=headers, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+
+        if data:
+            return data[0]["lat"], data[0]["lon"]
+
+        return None, None
+
+    except Exception as e:
+        logger.error(f"Error occurred: {e}")
+        return None, None
+
+    finally:
+        logger.info("completed")
+
+
 def check_pdf_exists(user_id, category):
     """
     Downloads a PDF file from an S3 bucket based on user ID and category.
@@ -474,6 +514,7 @@ async def fetch_dasha_related(lower_case_dashas, extra_urls, headers):
 
 async def merge_fetch(urls, extra_urls, headers, payload, payload_dasha, chart_type = "south"):
     data = await fetch_all_initial(urls, headers, payload, payload_dasha, chart_type=chart_type)
+    print("DATA",data)
     # print(data)
 
     for section_name, section_data in data.items():

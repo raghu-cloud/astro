@@ -292,3 +292,11 @@ aws secretsmanager create-secret \
 **Date Created**: January 16, 2026
 **AWS Documentation Reference**: https://docs.aws.amazon.com/apprunner/latest/dg/config-file-examples.html
 
+
+
+
+
+
+
+
+

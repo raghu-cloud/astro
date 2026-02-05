@@ -209,3 +209,11 @@ Since your `manage.py`, `requirements.txt`, and `apprunner.yaml` are all in the 
 🔧 **Solution**: Switch to Docker-based deployment OR remove system dependencies
 📁 **Source Directory**: Root directory ("/") - already correct for your setup
 
+
+
+
+
+
+
+
+

@@ -270,3 +270,11 @@ docker run -p 8000:8000 astro-ai
 - [Secrets Manager Console](https://console.aws.amazon.com/secretsmanager)
 - [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch)
 
+
+
+
+
+
+
+
+

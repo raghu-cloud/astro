@@ -9,9 +9,8 @@ build:
     build:
       - echo "Installing Python dependencies"
       - pip3 install --upgrade pip setuptools wheel
-      - pip3 install --no-cache-dir torch==2.6.0 torchaudio==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu
+      - pip3 install --no-cache-dir torch==2.6.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu
       - pip3 install --no-cache-dir -r requirements.txt
-      - pip3 install --no-cache-dir git+https://github.com/descriptinc/audiotools@348ebf2034ce24e2a91a553e3171cb00c0c71678
     post-build:
       - echo "Collecting static files"
       - python3 manage.py collectstatic --noinput
